@@ -1,0 +1,32 @@
+{
+  "name": "knexpress",
+  "version": "0.0.0",
+  "description": "Knex-based oject-relational mapping for JavaScript.",
+  "author": "Kristóf Poduszló <kripod@protonmail.com>",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "keywords": [
+    "orm",
+    "knex"
+  ],
+  "directories": {
+    "lib": "./lib",
+    "example": "./example"
+  },
+  "peerDependencies": {
+    "knex": ">=0.6.10 <0.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^2.4.0",
+    "eslint-config-airbnb": "^6.1.0",
+    "knex": "^0.10.0",
+    "sqlite3": "^3.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kripod/knexpress.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kripod/knexpress/issues"
+  }
+}

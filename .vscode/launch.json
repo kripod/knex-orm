@@ -1,0 +1,15 @@
+{
+  "version": "0.0.0",
+  "configurations": [
+    {
+      "name": "Launch example",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/example/index.js",
+      "cwd": "${workspaceRoot}/example",
+      "runtimeArgs": [
+        "--use-strict"
+      ]
+    }
+  ]
+}
