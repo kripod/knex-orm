@@ -4,7 +4,6 @@
     "max-len": [
       2,
       80
-    ],
-    "prefer-rest-params": 0 // TODO: Remove when Node supports rest params
+    ]
   }
 }
