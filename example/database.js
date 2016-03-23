@@ -1,5 +1,5 @@
 const knex = require('knex');
-const Knexpress = require('./../lib/index');
+const Knexpress = require('./../src/index');
 
 module.exports = new Knexpress(knex({
   dialect: 'sqlite3',

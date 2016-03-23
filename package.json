@@ -1,7 +1,7 @@
 {
   "name": "knexpress",
   "version": "0.0.0",
-  "description": "Knex-based oject-relational mapping for JavaScript.",
+  "description": "Knex-based object-relational mapping for JavaScript.",
   "author": "Kristóf Poduszló <kripod@protonmail.com>",
   "license": "MIT",
   "keywords": [
@@ -14,7 +14,9 @@
     "example": "./example"
   },
   "scripts": {
-    "build": "babel src -d lib"
+    "start": "node --use-strict --es-staging ./example",
+    "build": "rimraf ./lib && babel ./src -d ./lib -s",
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "lodash": "^4.6.1",
@@ -29,6 +31,7 @@
     "eslint": "^2.4.0",
     "eslint-config-airbnb": "^6.2.0",
     "knex": "^0.10.0",
+    "rimraf": "^2.5.2",
     "sqlite3": "^3.1.2"
   },
   "repository": {

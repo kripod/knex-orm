@@ -6,10 +6,10 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/example/index.js",
-      "cwd": "${workspaceRoot}/example",
+      "cwd": "${workspaceRoot}",
       "runtimeArgs": [
         "--use-strict",
-        "--es_staging"
+        "--es-staging"
       ]
     }
   ]
