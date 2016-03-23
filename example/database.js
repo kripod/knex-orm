@@ -1,10 +1,5 @@
 const knex = require('knex');
 const Knexpress = require('./../src/index');
+const knexConfig = require('./../knexfile');
 
-module.exports = new Knexpress(knex({
-  dialect: 'sqlite3',
-  useNullAsDefault: false,
-  connection: {
-    filename: './../test.db',
-  },
-}));
+module.exports = new Knexpress(knex(knexConfig));

@@ -1,6 +1,6 @@
 # Project-specific
 lib
-test.db
+*.sqlite*
 
 # Logs
 logs

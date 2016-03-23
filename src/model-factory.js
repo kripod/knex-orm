@@ -72,7 +72,7 @@ module.exports = (parent) => {
 
     if (typeof value === 'function') {
       // Check for ignored functions
-      if (Config.KNEX_IGNORED_STATIC_METHODS.indexOf(property) >= 0) continue;
+      if (Config.KNEX_IGNORED_STATIC_METHODS.includes(property)) continue;
 
       // Associate the function with the current object's base Knex state
       Model[property] = function x(...args) {

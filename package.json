@@ -9,6 +9,9 @@
     "knex"
   ],
   "main": "lib/index.js",
+  "files": [
+    "./lib"
+  ],
   "directories": {
     "lib": "./lib",
     "example": "./example"
