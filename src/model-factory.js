@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const pluralize = require('pluralize');
 const Config = require('./config');
+const EmptyDbObjectError = require('./errors/empty-db-object-error');
+const InexistentDbObjectError = require('./errors/inexistent-db-object-error');
 
 const OLD_PROPS = Symbol();
 
@@ -19,8 +21,13 @@ class Model {
   }
 
   del() {
-    // TODO: Throw an error if the Model hasn't got its 'idAttribute' set
-    return this._getKnexObject().del();
+    const knexObject = this._getKnexObject();
+
+    if (!knexObject) {
+      throw new InexistentDbObjectError();
+    }
+
+    return knexObject.del();
   }
 
   save() {
@@ -28,14 +35,11 @@ class Model {
     const updatableProps = {};
 
     for (const key of Object.keys(this)) {
-      // Ignore private properties
-      if (key[0] === '_') continue;
-
       const oldValue = this[OLD_PROPS][key];
       const newValue = this[key];
 
       // New and modified properties must be updated
-      if (typeof oldValue === undefined || newValue !== oldValue) {
+      if (typeof oldValue === 'undefined' || newValue !== oldValue) {
         updatableProps[key] = newValue;
       }
     }
@@ -43,8 +47,7 @@ class Model {
     // Don't run unnecessary queries
     if (Object.keys(updatableProps).length === 0) {
       if (!knexObject) {
-        // TODO: Throw Error: Cannot store empty objects
-        return null;
+        throw new EmptyDbObjectError();
       }
 
       return new Promise((resolve) => resolve(knexObject));
@@ -65,11 +68,10 @@ class Model {
   }
 
   _getKnexObject() {
-    const knex = this.constructor._parent.knex;
     const idAttribute = this.constructor.idAttribute;
-
     if (typeof this[idAttribute] === 'undefined') return null;
 
+    const knex = this.constructor._parent.knex;
     return knex(this.constructor.tableName)
       .where({ [idAttribute]: this[idAttribute] });
   }

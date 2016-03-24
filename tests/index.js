@@ -2,10 +2,9 @@ const test = require('tape');
 const Database = require('./database');
 const Employee = require('./models/employee');
 
-const NEW_EMPLOYEE_BIRTH_DATE_STRING = '1982-08-20 00:00:00.000';
 const NEW_EMPLOYEE_PROPS = {
   name: 'Olympia Pearson',
-  birth_date: new Date(NEW_EMPLOYEE_BIRTH_DATE_STRING),
+  birth_date: new Date('1982-08-20 00:00'),
 };
 
 const employee = new Employee(NEW_EMPLOYEE_PROPS);
@@ -17,24 +16,23 @@ test('creating new models', (t) => {
   }
 
   t.equals(employee.save().toString(),
-    `insert into "${Employee.tableName}" ("birth_date", "name") ` +
-    `values ('${NEW_EMPLOYEE_BIRTH_DATE_STRING}', '${NEW_EMPLOYEE_PROPS.name}')`
+    'insert into "employees" ("birth_date", "name") ' +
+    'values (\'1982-08-20 00:00:00.000\', \'Olympia Pearson\')'
   );
 
   t.end();
 });
 
 test('modifying existing models', (t) => {
-  const birthDateString = '1982-08-20 00:00:00.000';
-  employee.birth_date = new Date(birthDateString);
+  employee.birth_date = new Date('1982-08-20 00:00');
   employee.zip_code = 5998;
 
   t.equals(employee.save().toString(),
-    `insert into "${Employee.tableName}" ("birth_date", "zip_code") ` +
-    `values ('${birthDateString}', ${employee.zip_code})`
+    'insert into "employees" ("birth_date", "zip_code") ' +
+    'values (\'1982-08-20 00:00:00.000\', 5998)'
   );
 
-  console.log(employee.save().toString());
+  t.throws(() => employee.save(), /EmptyDbObjectError/);
 
   t.end();
 
