@@ -19,7 +19,9 @@
   "scripts": {
     "start": "node --use-strict --es-staging ./example",
     "build": "rimraf ./lib && babel ./src -d ./lib -s",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "init-db": "rimraf ./dev.sqlite3 && knex migrate:latest && knex seed:run",
+    "test": "npm run init-db"
   },
   "dependencies": {
     "lodash": "^4.6.1",

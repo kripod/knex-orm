@@ -1,21 +1,23 @@
 const Employee = require('./models/employee');
 
 const employee = new Employee({
-  custom_id: 1,
-  test_property: 'original',
+  name: 'Olympia Pearson',
+  birth_date: new Date(1982, 1, 20),
 });
 
-console.log(Employee.where({ id: 3 }).orderBy('id').toString());
-console.log(employee.del().toString());
-
-employee.save()
-  .then((e1) => {
-    console.log(e1);
-
-    employee.test_property = 'modified';
-    employee.new_property = 42;
+Employee.where({ id: 3 })
+  .then((res) => {
+    console.log(res);
+    //return res.del();
+  })
+  //.then((res) => console.log(res))
+  .then(() => employee.save())
+  .then((res) => {
+    console.log(res);
+    employee.birth_date = new Date(1982, 7, 20);
+    employee.zip_code = 5998;
     return employee.save();
   })
-  .then((e2) => {
-    console.log(e2);
+  .then((res) => {
+    console.log(res);
   });
