@@ -1,16 +1,27 @@
 {
-  "version": "0.0.0",
+  "version": "0.2.0",
   "configurations": [
     {
       "name": "Launch example",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/example/index.js",
+      "stopOnEntry": false,
+      "args": [],
       "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
       "runtimeArgs": [
+        "--nolazy",
         "--es-staging",
         "--use-strict"
-      ]
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "externalConsole": false,
+      "sourceMaps": false,
+      "outDir": null
     }
   ]
 }

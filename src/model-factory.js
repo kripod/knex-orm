@@ -32,9 +32,13 @@ class Model {
 
   save() {
     const knexObject = this._getKnexObject();
+    const ignorableProps = [this.constructor.idAttribute];
     const updatableProps = {};
 
     for (const key of Object.keys(this)) {
+      // Respect ignorable properties
+      if (ignorableProps.includes(key)) continue;
+
       const oldValue = this[OLD_PROPS][key];
       const newValue = this[key];
 
@@ -50,7 +54,7 @@ class Model {
         throw new EmptyDbObjectError();
       }
 
-      return new Promise((resolve) => resolve(knexObject));
+      return knexObject;
     }
 
     // Update the Model's old properties with the new ones

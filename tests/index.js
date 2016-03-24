@@ -1,5 +1,6 @@
 const test = require('tape');
 const Database = require('./database');
+const Company = require('./models/company');
 const Employee = require('./models/employee');
 
 const NEW_EMPLOYEE_PROPS = {
@@ -7,15 +8,29 @@ const NEW_EMPLOYEE_PROPS = {
   birth_date: new Date('1982-08-20 00:00'),
 };
 
-const employee = new Employee(NEW_EMPLOYEE_PROPS);
+const newEmployee = new Employee(NEW_EMPLOYEE_PROPS);
+
+test('static model property defaults', (t) => {
+  t.equal(Company.tableName, 'companies');
+
+  t.end();
+});
+
+test('static model methods', (t) => {
+  t.equal(Company.where({ id: 3 }).toString(),
+    'select * from "companies" where "id" = 3'
+  );
+
+  t.end();
+});
 
 test('creating new models', (t) => {
   // Ensure that no private Model property gets exposed
-  for (const key of Object.keys(employee)) {
-    t.equal(employee[key], NEW_EMPLOYEE_PROPS[key]);
+  for (const key of Object.keys(newEmployee)) {
+    t.equal(newEmployee[key], NEW_EMPLOYEE_PROPS[key]);
   }
 
-  t.equals(employee.save().toString(),
+  t.equals(newEmployee.save().toString(),
     'insert into "employees" ("birth_date", "name") ' +
     'values (\'1982-08-20 00:00:00.000\', \'Olympia Pearson\')'
   );
@@ -24,38 +39,43 @@ test('creating new models', (t) => {
 });
 
 test('modifying existing models', (t) => {
-  employee.birth_date = new Date('1982-08-20 00:00');
-  employee.zip_code = 5998;
+  newEmployee.birth_date = new Date('1982-08-20 00:00');
+  newEmployee.zip_code = 5998;
 
-  t.equals(employee.save().toString(),
+  t.equals(newEmployee.save().toString(),
     'insert into "employees" ("birth_date", "zip_code") ' +
     'values (\'1982-08-20 00:00:00.000\', 5998)'
   );
 
-  t.throws(() => employee.save(), /EmptyDbObjectError/);
+  // Test modifying an existing employee
+  let employee = new Employee({
+    id: 5,
+    zip_code: 4674,
+  });
+
+  t.equals(employee.save().toString(),
+    'update "employees" set "zip_code" = 4674 where "id" = 5'
+  );
+
+  // Cover the avoidance of unnecessary queries
+  t.throws(() => newEmployee.save(), /EmptyDbObjectError/);
+  t.equals(employee.save().toString(),
+    'select * from "employees" where "id" = 5'
+  );
 
   t.end();
-
-  /*employee.save()
-    .then((res) => {
-      t.equal(res, employee);
-      //employee.save(); // Cover the avoidance of unnecessary queries
-    });
-    //.then((res) => {
-    //  t.equal(res, employee);
-    //});
-
-  t.end();*/
 });
 
-/*test('deleting existing models', (t) => {
-  employee.del()
-    .then(() => {
-      t.ok();
-    });
+test('deleting existing models', (t) => {
+  t.throws(() => newEmployee.del(), /InexistentDbObjectError/);
+
+  const employee = new Employee({ id: 1 });
+  t.equals(employee.del().toString(),
+    'delete from "employees" where "id" = 1'
+  );
 
   t.end();
-});*/
+});
 
 // Destroy the Knex instance being used to exit from the test suite
 Database.knex.destroy();
