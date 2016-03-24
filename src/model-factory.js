@@ -14,15 +14,17 @@ class Model {
       this[key] = props[key];
     }
 
-    // Store the initial properties of the instance
-    this[OLD_PROPS] = props;
+    // Initialize a store for old properties of the instance
+    this[OLD_PROPS] = [];
   }
 
   del() {
+    // TODO: Throw an error if the Model hasn't got its 'idAttribute' set
     return this._getKnexObject().del();
   }
 
   save() {
+    const knexObject = this._getKnexObject();
     const updatableProps = {};
 
     for (const key of Object.keys(this)) {
@@ -40,27 +42,33 @@ class Model {
 
     // Don't run unnecessary queries
     if (Object.keys(updatableProps).length === 0) {
-      return new Promise((resolve) => resolve(this));
+      if (!knexObject) {
+        // TODO: Throw Error: Cannot store empty objects
+        return null;
+      }
+
+      return new Promise((resolve) => resolve(knexObject));
     }
 
-    return this._getKnexObject()
-      .update(updatableProps)
-      .then((res) => {
-        console.log('UPDATE RESPONSE:');
-        console.log(res);
+    // Update the Model's old properties with the new ones
+    for (const key of Object.keys(updatableProps)) {
+      this[OLD_PROPS][key] = updatableProps[key];
+    }
 
-        // Update the Model's old properties with the new ones
-        for (const key of Object.keys(updatableProps)) {
-          this[OLD_PROPS][key] = updatableProps[key];
-        }
+    // Check whether the current instance needs to be given an ID
+    if (!knexObject) {
+      const knex = this.constructor._parent.knex;
+      return knex(this.constructor.tableName).insert(updatableProps);
+    }
 
-        return this;
-      });
+    return knexObject.update(updatableProps);
   }
 
   _getKnexObject() {
     const knex = this.constructor._parent.knex;
     const idAttribute = this.constructor.idAttribute;
+
+    if (typeof this[idAttribute] === 'undefined') return null;
 
     return knex(this.constructor.tableName)
       .where({ [idAttribute]: this[idAttribute] });

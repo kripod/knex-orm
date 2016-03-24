@@ -1,8 +1,7 @@
 const Database = require('./../database');
 
 class Employee extends Database.Model {
-  // The 'tableName' property is omitted on purpose
-  static get idAttribute() { return 'custom_id'; }
+  static get tableName() { return 'employees'; }
 }
 
 module.exports = Employee;
