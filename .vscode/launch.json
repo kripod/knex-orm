@@ -8,8 +8,8 @@
       "program": "${workspaceRoot}/example/index.js",
       "cwd": "${workspaceRoot}",
       "runtimeArgs": [
-        "--use-strict",
-        "--es-staging"
+        "--es-staging",
+        "--use-strict"
       ]
     }
   ]

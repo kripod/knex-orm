@@ -2,6 +2,8 @@ const _ = require('lodash');
 const pluralize = require('pluralize');
 const Config = require('./config');
 
+const OLD_PROPS = Symbol();
+
 class Model {
   static get tableName() { return pluralize(_.snakeCase(this.name)); }
   static get idAttribute() { return 'id'; }
@@ -13,7 +15,7 @@ class Model {
     }
 
     // Store the initial properties of the instance
-    this._oldProps = props;
+    this[OLD_PROPS] = props;
   }
 
   del() {
@@ -27,7 +29,7 @@ class Model {
       // Ignore private properties
       if (key[0] === '_') continue;
 
-      const oldValue = this._oldProps[key];
+      const oldValue = this[OLD_PROPS][key];
       const newValue = this[key];
 
       // New and modified properties must be updated
@@ -43,10 +45,13 @@ class Model {
 
     return this._getKnexObject()
       .update(updatableProps)
-      .then(() => {
+      .then((res) => {
+        console.log('UPDATE RESPONSE:');
+        console.log(res);
+
         // Update the Model's old properties with the new ones
         for (const key of Object.keys(updatableProps)) {
-          this._oldProps[key] = updatableProps[key];
+          this[OLD_PROPS][key] = updatableProps[key];
         }
 
         return this;
