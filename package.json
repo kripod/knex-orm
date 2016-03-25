@@ -1,6 +1,6 @@
 {
   "name": "knexpress",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Knex-based object-relational mapping for JavaScript.",
   "author": "Kristóf Poduszló <kripod@protonmail.com>",
   "license": "MIT",
@@ -13,8 +13,7 @@
     "./lib"
   ],
   "directories": {
-    "lib": "./lib",
-    "example": "./example"
+    "lib": "./lib"
   },
   "scripts": {
     "start": "node --es-staging --use-strict ./example",
@@ -29,7 +28,7 @@
     "pluralize": "^1.2.1"
   },
   "peerDependencies": {
-    "knex": ">=0.6.10 <0.11.0"
+    "knex": "<0.11.0"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
