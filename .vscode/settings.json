@@ -7,7 +7,6 @@
   "search.exclude": {
     "**/node_modules": true,
     "**/lib": true,
-    "**/coverage": true,
-    "**/docs": true
+    "**/coverage": true
   }
 }

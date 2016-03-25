@@ -1,3 +1,5 @@
+/** @module knexpress */
+
 exports.KNEX_IGNORED_STATIC_METHODS = [
   'Promise',
   'from',

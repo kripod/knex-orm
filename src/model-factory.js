@@ -1,3 +1,5 @@
+/** @module knexpress */
+
 const _ = require('lodash');
 const pluralize = require('pluralize');
 const Config = require('./config');
@@ -6,10 +8,27 @@ const InexistentDbObjectError = require('./errors/inexistent-db-object-error');
 
 const OLD_PROPS = Symbol();
 
+/**
+ * Base Model class which shall be extended by the attributes of a database
+ * object.
+ */
 class Model {
+  /**
+   * Case-sensitive name of the database table which corresponds to the Model.
+   * @type string
+   */
   static get tableName() { return pluralize(_.snakeCase(this.name)); }
+
+  /**
+   * ID attribute, which is used as the primary key of the Model.
+   * @type string
+   */
   static get idAttribute() { return 'id'; }
 
+  /**
+   * Creates a new Model instance.
+   * @property {Object} props Initial properties of the instance.
+   */
   constructor(props) {
     // Set the initial properties of the instance
     for (const key of Object.keys(props)) {
@@ -20,6 +39,9 @@ class Model {
     this[OLD_PROPS] = [];
   }
 
+  /**
+   * Queues the deletion of the current Model from the database.
+   */
   del() {
     const knexObject = this._getKnexObject();
 
@@ -30,6 +52,12 @@ class Model {
     return knexObject.del();
   }
 
+  /**
+   * Queues saving (creating or updating) the current Model in the database.
+   * If the 'idAttribute' of the current instance is set, then this method
+   * queues an update query based on it. Otherwise, a new Model gets inserted
+   * into the database.
+   */
   save() {
     const knexObject = this._getKnexObject();
     const ignorableProps = [this.constructor.idAttribute];

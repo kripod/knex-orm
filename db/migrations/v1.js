@@ -15,7 +15,7 @@ exports.up = (knex, Promise) =>
       table.increments('rank');
 
       table.string('name').notNullable();
-      table.string('email');
+      table.string('email').unique();
     }),
   ]);
 

@@ -48,7 +48,7 @@ test('modifying existing models', (t) => {
   );
 
   // Test modifying an existing employee
-  let employee = new Employee({
+  const employee = new Employee({
     id: 5,
     zip_code: 4674,
   });
