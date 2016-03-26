@@ -1,6 +1,6 @@
 /** @module knexpress */
 
-const snakeCase = require('lodash.snakeCase');
+const snakeCase = require('lodash.snakecase');
 const pluralize = require('pluralize');
 const Config = require('./config');
 const EmptyDbObjectError = require('./errors/empty-db-object-error');
