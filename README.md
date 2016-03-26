@@ -115,6 +115,11 @@ Company.where({ email: 'info@famouscompany.example' })
 
 ## API Reference
 
+Every significant [Knex][] query method is inherited as a static Model function.
+(For example: `Company.where({ rank: 2 })`, `Company.first()`)
+
+Instances of Models have specific methods discussed below.
+
 <a name="module_knexpress"></a>
 
 ## knexpress

@@ -1,6 +1,6 @@
 /** @module knexpress */
 
-const _ = require('lodash');
+const snakeCase = require('lodash.snakeCase');
 const pluralize = require('pluralize');
 const Config = require('./config');
 const EmptyDbObjectError = require('./errors/empty-db-object-error');
@@ -17,7 +17,7 @@ class Model {
    * Case-sensitive name of the database table which corresponds to the Model.
    * @type string
    */
-  static get tableName() { return pluralize(_.snakeCase(this.name)); }
+  static get tableName() { return pluralize(snakeCase(this.name)); }
 
   /**
    * ID attribute, which is used as the primary key of the Model.
