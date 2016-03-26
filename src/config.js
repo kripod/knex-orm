@@ -1,44 +1,15 @@
 /** @module knexpress */
 
-exports.KNEX_IGNORED_STATIC_METHODS = [
-  'Promise',
+const knexQueryMethods = require('knex/lib/query/methods');
+
+const KNEX_IGNORED_STATIC_METHODS = [
   'from',
   'fromJS',
   'into',
   'table',
   'queryBuilder',
-  'raw',
-  'batchInsert',
-  'transaction',
-  'initialize',
-  'destroy',
-  'setMaxListeners',
-  'getMaxListeners',
-  'emit',
-  'addListener',
-  'on',
-  'once',
-  'removeListener',
-  'removeAllListeners',
-  'listeners',
-  'listenerCount',
 ];
 
-exports.KNEX_RETURN_METHODS = [
-  'toString',
-  'toSQL',
-  'bind',
-  'catch',
-  'finally',
-  'asCallback',
-  'spread',
-  'map',
-  'reduce',
-  'tap',
-  'thenReturn',
-  'return',
-  'yield',
-  'ensure',
-  'exec',
-  'reflect',
-];
+exports.KNEX_ALLOWED_STATIC_METHODS = knexQueryMethods.filter((item) =>
+  !KNEX_IGNORED_STATIC_METHODS.includes(item)
+);

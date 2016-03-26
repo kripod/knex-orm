@@ -2,7 +2,7 @@
 
 const snakeCase = require('lodash.snakecase');
 const pluralize = require('pluralize');
-const QueryBuilder = require('./query-builder');
+const Config = require('./config');
 const EmptyDbObjectError = require('./errors/empty-db-object-error');
 const InexistentDbObjectError = require('./errors/inexistent-db-object-error');
 
@@ -93,7 +93,7 @@ class Model {
     // Check whether the current instance needs to be given an ID
     if (!knexObject) {
       const knex = this.constructor._parent.knex;
-      return knex(this.constructor.tableName).insert(updatableProps);
+      return knex.from(this.constructor.tableName).insert(updatableProps);
     }
 
     return knexObject.update(updatableProps);
@@ -104,14 +104,26 @@ class Model {
     if (typeof this[idAttribute] === 'undefined') return null;
 
     const knex = this.constructor._parent.knex;
-    return knex(this.constructor.tableName)
+    return knex.from(this.constructor.tableName)
       .where({ [idAttribute]: this[idAttribute] });
   }
 }
 
 module.exports = (parent) => {
+  const knex = parent.knex;
   Model._parent = parent;
 
-  // Extend the static model with query builder functionality
-  return Object.assign(Model, new QueryBuilder(parent.knex));
+  // Inherit the static Knex methods of the corresponding DB table
+  for (const property of Object.getOwnPropertyNames(knex)) {
+    // Check whether the method is allowed
+    if (!Config.KNEX_ALLOWED_STATIC_METHODS.includes(property)) continue;
+
+    // Associate the function with the current object's base Knex state
+    Model[property] = function x(...args) {
+      // In the current context, 'this' refers to a static Model object
+      return knex.from(this.tableName)[property](...args);
+    };
+  }
+
+  return Model;
 };

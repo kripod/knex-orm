@@ -17,7 +17,8 @@ class Knexpress {
   // will handle letter case convertion for strings automatically (between
   // camelCase and snake_case).
   constructor(knex, options) {
-    this.knex = knex;
+    // Create a deep copy of the Knex client to make its methods alterable
+    this.knex = Object.assign({}, knex);
 
     this.options = {
       convertCase: (options || {}).convertCase || true,
