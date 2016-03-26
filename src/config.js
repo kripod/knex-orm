@@ -23,3 +23,22 @@ exports.KNEX_IGNORED_STATIC_METHODS = [
   'listeners',
   'listenerCount',
 ];
+
+exports.KNEX_RETURN_METHODS = [
+  'toString',
+  'toSQL',
+  'bind',
+  'catch',
+  'finally',
+  'asCallback',
+  'spread',
+  'map',
+  'reduce',
+  'tap',
+  'thenReturn',
+  'return',
+  'yield',
+  'ensure',
+  'exec',
+  'reflect',
+];

@@ -1,12 +1,11 @@
 # knexpress
 
+Knex-based object-relational mapping for JavaScript.
+
 [![Version (npm)](https://img.shields.io/npm/v/knexpress.svg)](https://npmjs.com/package/knexpress)
 [![Build Status](https://img.shields.io/travis/kripod/knexpress/master.svg)](https://travis-ci.org/kripod/knexpress)
 [![Code Coverage](https://img.shields.io/codeclimate/coverage/github/kripod/knexpress.svg)](https://codeclimate.com/github/kripod/knexpress/coverage)
 [![Code Climate](https://img.shields.io/codeclimate/github/kripod/knexpress.svg)](https://codeclimate.com/github/kripod/knexpress)
-
-[Knex][]-based object-relational mapping for JavaScript, targeting modern
-development environments.
 
 ## Introduction
 
@@ -25,7 +24,7 @@ Node versions, the source code of the package is transpiled to ES5.
 Installing [Knex][] and at least one of its supported database drivers as peer
 dependencies is mandatory.
 
-```js
+```bash
 $ npm install knex --save
 $ npm install knexpress --save
 
