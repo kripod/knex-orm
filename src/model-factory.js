@@ -6,8 +6,6 @@ const Config = require('./config');
 const EmptyDbObjectError = require('./errors/empty-db-object-error');
 const InexistentDbObjectError = require('./errors/inexistent-db-object-error');
 
-const OLD_PROPS = Symbol();
-
 /**
  * Base Model class which shall be extended by the attributes of a database
  * object.
@@ -36,7 +34,33 @@ class Model {
     }
 
     // Initialize a store for old properties of the instance
-    this[OLD_PROPS] = [];
+    Object.defineProperty(this, '_oldProps', {
+      writable: true,
+      value: [],
+    });
+
+    // Initialize a store for related Models
+    Object.defineProperty(this, '_related', {
+      value: [],
+    });
+  }
+
+  hasOne() {
+    // TODO
+  }
+
+  hasMany() {
+    // TODO
+  }
+
+  belongsTo(Target, foreignKey) {
+    const tableName = Target.tableName;
+    const cached = this._related[tableName];
+
+    // Use the cache if possible
+    if (typeof cached !== 'undefined') return cached;
+
+    // TODO: Query
   }
 
   /**
@@ -67,7 +91,7 @@ class Model {
       // Respect ignorable properties
       if (ignorableProps.includes(key)) continue;
 
-      const oldValue = this[OLD_PROPS][key];
+      const oldValue = this._oldProps[key];
       const newValue = this[key];
 
       // New and modified properties must be updated
@@ -87,7 +111,7 @@ class Model {
 
     // Update the Model's old properties with the new ones
     for (const key of Object.keys(updatableProps)) {
-      this[OLD_PROPS][key] = updatableProps[key];
+      this._oldProps[key] = updatableProps[key];
     }
 
     // Check whether the current instance needs to be given an ID
@@ -111,7 +135,9 @@ class Model {
 
 module.exports = (parent) => {
   const knex = parent.knex;
-  Model._parent = parent;
+  Object.defineProperty(Model, '_parent', {
+    value: parent,
+  });
 
   // Inherit the static Knex methods of the corresponding DB table
   for (const property of Object.getOwnPropertyNames(knex)) {

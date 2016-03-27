@@ -20,9 +20,18 @@ class Knexpress {
     // Create a deep copy of the Knex client to make its methods alterable
     this.knex = Object.assign({}, knex);
 
-    this.options = {
-      convertCase: (options || {}).convertCase || true,
-    };
+    this.options = Object.assign(
+      {
+        // Defaults
+        convertCase: true,
+      },
+      options
+    );
+
+    // Initialize Model registry
+    Object.defineProperty(this, '_Models', {
+      value: {},
+    });
   }
 
   /**
@@ -31,6 +40,15 @@ class Knexpress {
    */
   get Model() {
     return modelFactory(this);
+  }
+
+  /**
+   * Registers a static Model object to the list of database objects.
+   * @property {Model} Model Model to be registered.
+   * @property {string} [name] Name under which the Model shall be registered.
+   */
+  register(Model, name) {
+    this._Models[name || Model.tableName] = Model;
   }
 }
 
