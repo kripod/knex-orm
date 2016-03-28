@@ -1,8 +1,13 @@
 /** @module knexpress */
 
+const knexExtensions = require('./knex-extensions');
 const modelFactory = require('./model-factory');
 const DbObjectAlreadyRegisteredError =
   require('./errors/db-object-already-registered-error');
+
+const DEFAULT_OPTIONS = {
+  convertCase: true,
+};
 
 /**
  * Entry class for accessing the functionality of Knexpress.
@@ -19,16 +24,15 @@ class Knexpress {
   // will handle letter case convertion for strings automatically (between
   // camelCase and snake_case).
   constructor(knex, options) {
-    // Create a deep copy of the Knex client to make its methods alterable
-    this.knex = Object.assign({}, knex);
-
-    this.options = Object.assign(
-      {
-        // Defaults
-        convertCase: true,
-      },
-      options
+    // Create a shallow copy of the Knex client and extend its methods
+    this.knex = Object.assign({}, knex, knexExtensions);
+    this.knex.client.QueryBuilder.prototype = Object.assign(
+      knex.client.QueryBuilder.prototype,
+      knexExtensions
     );
+
+    // Parse and store options
+    this.options = Object.assign(DEFAULT_OPTIONS, options);
 
     // Initialize Model registry
     Object.defineProperty(this, '_Models', {

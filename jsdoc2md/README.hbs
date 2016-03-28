@@ -98,10 +98,10 @@ Company.where({ email: 'info@famouscompany.example' })
     const company = new Company(rows[0]); // Equals to 'famousCompany'
     company.name = 'The Most Famous Company Ever';
     return company.save();
-  }
+  })
   .then((rowsCount) => {
     console.log(rowsCount); // 1
-  };
+  });
 ```
 
 ## Upcoming features

@@ -98,10 +98,10 @@ Company.where({ email: 'info@famouscompany.example' })
     const company = new Company(rows[0]); // Equals to 'famousCompany'
     company.name = 'The Most Famous Company Ever';
     return company.save();
-  }
+  })
   .then((rowsCount) => {
     console.log(rowsCount); // 1
-  };
+  });
 ```
 
 ## Upcoming features
@@ -124,11 +124,13 @@ Instances of Models have specific methods discussed below.
 ## knexpress
 
 * [knexpress](#module_knexpress)
+    * [~DbObjectAlreadyRegisteredError](#module_knexpress..DbObjectAlreadyRegisteredError) ⇐ <code>Error</code>
     * [~EmptyDbObjectError](#module_knexpress..EmptyDbObjectError) ⇐ <code>Error</code>
     * [~InexistentDbObjectError](#module_knexpress..InexistentDbObjectError) ⇐ <code>Error</code>
     * [~Knexpress](#module_knexpress..Knexpress)
         * [new Knexpress()](#new_module_knexpress..Knexpress_new)
         * [.Model](#module_knexpress..Knexpress+Model) : <code>Model</code>
+        * [.register()](#module_knexpress..Knexpress+register)
     * [~Model](#module_knexpress..Model)
         * [new Model()](#new_module_knexpress..Model_new)
         * _instance_
@@ -137,6 +139,19 @@ Instances of Models have specific methods discussed below.
         * _static_
             * [.tableName](#module_knexpress..Model.tableName) : <code>string</code>
             * [.idAttribute](#module_knexpress..Model.idAttribute) : <code>string</code>
+
+<a name="module_knexpress..DbObjectAlreadyRegisteredError"></a>
+
+### knexpress~DbObjectAlreadyRegisteredError ⇐ <code>Error</code>
+An error which gets thrown when an attempt is made to register a databaseobject multiple times.
+
+**Kind**: inner class of <code>[knexpress](#module_knexpress)</code>  
+**Extends:** <code>Error</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Name of the database object in question. |
 
 <a name="module_knexpress..EmptyDbObjectError"></a>
 
@@ -162,6 +177,7 @@ Entry class for accessing the functionality of Knexpress.
 * [~Knexpress](#module_knexpress..Knexpress)
     * [new Knexpress()](#new_module_knexpress..Knexpress_new)
     * [.Model](#module_knexpress..Knexpress+Model) : <code>Model</code>
+    * [.register()](#module_knexpress..Knexpress+register)
 
 <a name="new_module_knexpress..Knexpress_new"></a>
 
@@ -174,6 +190,19 @@ Creates a new Knexpress ORM instance.
 Base Model class corresponding to the current ORM instance.
 
 **Kind**: instance property of <code>[Knexpress](#module_knexpress..Knexpress)</code>  
+<a name="module_knexpress..Knexpress+register"></a>
+
+#### knexpress.register()
+Registers a static Model object to the list of database objects.
+
+**Kind**: instance method of <code>[Knexpress](#module_knexpress..Knexpress)</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| Model | <code>Model</code> | Model to be registered. |
+| name | <code>string</code> | Name under which the Model shall be registered. |
+
 <a name="module_knexpress..Model"></a>
 
 ### knexpress~Model

@@ -18,6 +18,7 @@
   "scripts": {
     "start": "node --es-staging --use-strict ./example",
     "build": "rimraf ./lib && babel ./src -d ./lib -s",
+    "watch": "npm run build -- -w",
     "prepublish": "npm run build",
     "init-db": "rimraf ./dev.sqlite3 && knex migrate:latest && knex seed:run",
     "docs": "jsdoc2md \"./src/**/*.js\" -t ./jsdoc2md/README.hbs > ./README.md",

@@ -10,6 +10,8 @@ const NEW_EMPLOYEE_PROPS = {
 
 const newEmployee = new Employee(NEW_EMPLOYEE_PROPS);
 
+// console.log(Company.where({ id: 3 }).orderBy('id').withRelated().toString());
+
 test('static model property defaults', (t) => {
   t.equal(Company.tableName, 'companies');
 
