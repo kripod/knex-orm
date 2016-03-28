@@ -1,6 +1,8 @@
 /** @module knexpress */
 
 const modelFactory = require('./model-factory');
+const DbObjectAlreadyRegisteredError =
+  require('./errors/db-object-already-registered-error');
 
 /**
  * Entry class for accessing the functionality of Knexpress.
@@ -48,7 +50,14 @@ class Knexpress {
    * @property {string} [name] Name under which the Model shall be registered.
    */
   register(Model, name) {
-    this._Models[name || Model.tableName] = Model;
+    // Determine the Model's name and then check if it's already registered
+    const modelName = name || Model.name;
+    if (Object.keys(this._Models).includes(modelName)) {
+      throw new DbObjectAlreadyRegisteredError(modelName);
+    }
+
+    this._Models[modelName] = Model;
+    return Model;
   }
 }
 

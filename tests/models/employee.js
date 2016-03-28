@@ -4,4 +4,4 @@ class Employee extends Database.Model {
   static get tableName() { return 'employees'; }
 }
 
-module.exports = Employee;
+module.exports = Database.register(Employee);
