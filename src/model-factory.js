@@ -3,6 +3,8 @@
 const snakeCase = require('lodash.snakecase');
 const pluralize = require('pluralize');
 const Config = require('./config');
+const Relation = require('./relation');
+const RelationType = require('./enums/relation-type');
 const EmptyDbObjectError = require('./errors/empty-db-object-error');
 const InexistentDbObjectError = require('./errors/inexistent-db-object-error');
 
@@ -45,22 +47,16 @@ class Model {
     });
   }
 
-  hasOne() {
-    // TODO
+  hasOne(Target, foreignKey) {
+    return new Relation(this, RelationType.ONE_TO_ONE, Target, foreignKey);
   }
 
-  hasMany() {
-    // TODO
+  hasMany(Target, foreignKey) {
+    return new Relation(this, RelationType.ONE_TO_MANY, Target, foreignKey);
   }
 
   belongsTo(Target, foreignKey) {
-    const tableName = Target.tableName;
-    const cached = this._related[tableName];
-
-    // Use the cache if possible
-    if (typeof cached !== 'undefined') return cached;
-
-    // TODO: Query
+    return new Relation(this, RelationType.MANY_TO_ONE, Target, foreignKey);
   }
 
   /**
