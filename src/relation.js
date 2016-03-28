@@ -1,12 +1,25 @@
 const RelationType = require('./enums/relation-type');
 
+/**
+ * Represents a relation between Models.
+ * @property {Model} origin Static Model object which shall be joined with the
+ * target.
+ * @property {Model} target Static Model object which corresponds to the origin.
+ * @property {RelationType} type Type of the relation between 'origin' and
+ * 'target'.
+ * @property {string} foreignKey The attribute of 'target' which uniquely
+ * identifies a row of 'origin'.
+ * @private
+ */
 class Relation {
-  constructor(parentModel, type, Target, foreignKey) {
-    this.type = type;
+  constructor(origin, target, type, foreignKey) {
+    this.origin = origin;
 
     // Get the Target's registered Model if Target is a string
-    const modelRegistry = parentModel._parent._Models;
-    this.Target = typeof Target === 'string' ? modelRegistry[Target] : Target;
+    const modelRegistry = origin._parent._models;
+    this.target = typeof target === 'string' ? modelRegistry[target] : target;
+
+    this.type = type;
     this.foreignKey = foreignKey;
   }
 
@@ -14,10 +27,12 @@ class Relation {
     // TODO
     switch (this.type) {
       case RelationType.ONE_TO_MANY:
-        break;
-
       case RelationType.ONE_TO_ONE:
-        break;
+        return knexQuery.join(
+          this.target.tableName,
+          `${this.origin.tableName}.${this.origin.idAttribute}`,
+          `${this.target.tableName}.${this.foreignKey}`
+        );
 
       case RelationType.MANY_TO_ONE:
         break;

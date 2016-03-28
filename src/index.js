@@ -35,7 +35,7 @@ class Knexpress {
     this.options = Object.assign(DEFAULT_OPTIONS, options);
 
     // Initialize Model registry
-    Object.defineProperty(this, '_Models', {
+    Object.defineProperty(this, '_models', {
       value: {},
     });
   }
@@ -53,15 +53,15 @@ class Knexpress {
    * @property {Model} Model Model to be registered.
    * @property {string} [name] Name under which the Model shall be registered.
    */
-  register(Model, name) {
+  register(model, name) {
     // Determine the Model's name and then check if it's already registered
-    const modelName = name || Model.name;
-    if (Object.keys(this._Models).includes(modelName)) {
+    const modelName = name || model.name;
+    if (Object.keys(this._models).includes(modelName)) {
       throw new DbObjectAlreadyRegisteredError(modelName);
     }
 
-    this._Models[modelName] = Model;
-    return Model;
+    this._models[modelName] = model;
+    return model;
   }
 }
 

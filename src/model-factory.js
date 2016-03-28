@@ -144,7 +144,7 @@ module.exports = (parent) => {
     Model[property] = function x(...args) {
       // In the current context, 'this' refers to a static Model object
       const result = knex.from(this.tableName)[property](...args);
-      result._parentModel = Model;
+      result._parentModel = this;
       return result;
     };
   }
