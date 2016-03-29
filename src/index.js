@@ -1,5 +1,3 @@
-/** @module knexpress */
-
 const knexExtensions = require('./knex-extensions');
 const modelFactory = require('./model-factory');
 const DbObjectAlreadyRegisteredError =

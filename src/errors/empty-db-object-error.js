@@ -1,5 +1,3 @@
-/** @module knexpress */
-
 const ExtendableError = require('./extendable-error');
 
 /**

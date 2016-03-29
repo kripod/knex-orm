@@ -1,5 +1,3 @@
-/** @module knexpress */
-
 class ExtendableError extends Error {
   constructor(message) {
     super(message);

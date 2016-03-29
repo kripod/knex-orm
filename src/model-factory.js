@@ -1,5 +1,3 @@
-/** @module knexpress */
-
 const inflection = require('inflection');
 const Config = require('./config');
 const Relation = require('./relation');

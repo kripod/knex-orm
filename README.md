@@ -15,6 +15,10 @@ with the power of [Knex][] and modern ECMAScript features.
 Knexpress aims to provide a wrapper for every significant method of [Knex][],
 while keeping the ORM code overhead as low as possible.
 
+[bookshelf]: http://bookshelfjs.org
+
+[knex]: http://knexjs.org
+
 ## Getting started
 
 Installing [Knex][] and at least one of its supported database drivers as peer
@@ -64,6 +68,12 @@ class Company extends Database.Model {
 }
 ```
 
+Every significant [Knex][] query method is inherited as a static Model function.
+(For example: `Company.where({ rank: 2 })`, `Company.first()`)
+
+Instances of Models have specific methods discussed in the
+[API Reference](#api-reference).
+
 ## Examples
 
 Creating and storing a new Model:
@@ -102,148 +112,108 @@ Company.where({ email: 'info@famouscompany.example' })
 
 ## Upcoming features
 
-- Associations based on Model relationships
-- Parse ordinary [Knex][] responses as Models if possible
-- Option to automatically convert the letter case of strings (between camelCase
-  and snake_case)
-- Optional Model property validation
+-   Associations based on Model relationships
+-   Parse ordinary [Knex][] responses as Models if possible
+-   Option to automatically convert the letter case of strings (between camelCase
+    and snake_case)
+-   Optional Model property validation
+
+<a name="api-reference"></a>
 
 ## API Reference
 
-Every significant [Knex][] query method is inherited as a static Model function.
-(For example: `Company.where({ rank: 2 })`, `Company.first()`)
+### Knexpress
 
-Instances of Models have specific methods discussed below.
-
-<a name="module_knexpress"></a>
-
-## knexpress
-
-* [knexpress](#module_knexpress)
-    * [~DbObjectAlreadyRegisteredError](#module_knexpress..DbObjectAlreadyRegisteredError) ⇐ <code>Error</code>
-    * [~EmptyDbObjectError](#module_knexpress..EmptyDbObjectError) ⇐ <code>Error</code>
-    * [~InexistentDbObjectError](#module_knexpress..InexistentDbObjectError) ⇐ <code>Error</code>
-    * [~Knexpress](#module_knexpress..Knexpress)
-        * [new Knexpress()](#new_module_knexpress..Knexpress_new)
-        * [.Model](#module_knexpress..Knexpress+Model) : <code>Model</code>
-        * [.register()](#module_knexpress..Knexpress+register)
-    * [~Model](#module_knexpress..Model)
-        * [new Model()](#new_module_knexpress..Model_new)
-        * _instance_
-            * [.del()](#module_knexpress..Model+del)
-            * [.save()](#module_knexpress..Model+save)
-        * _static_
-            * [.tableName](#module_knexpress..Model.tableName) : <code>string</code>
-            * [.idAttribute](#module_knexpress..Model.idAttribute) : <code>string</code>
-
-<a name="module_knexpress..DbObjectAlreadyRegisteredError"></a>
-
-### knexpress~DbObjectAlreadyRegisteredError ⇐ <code>Error</code>
-An error which gets thrown when an attempt is made to register a databaseobject multiple times.
-
-**Kind**: inner class of <code>[knexpress](#module_knexpress)</code>  
-**Extends:** <code>Error</code>  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| name | <code>string</code> | Name of the database object in question. |
-
-<a name="module_knexpress..EmptyDbObjectError"></a>
-
-### knexpress~EmptyDbObjectError ⇐ <code>Error</code>
-An error which gets thrown when an attempt is made to store an empty databaseobject.
-
-**Kind**: inner class of <code>[knexpress](#module_knexpress)</code>  
-**Extends:** <code>Error</code>  
-<a name="module_knexpress..InexistentDbObjectError"></a>
-
-### knexpress~InexistentDbObjectError ⇐ <code>Error</code>
-An error which gets thrown when an attempt is made to modify an inexistentdatabase object.
-
-**Kind**: inner class of <code>[knexpress](#module_knexpress)</code>  
-**Extends:** <code>Error</code>  
-<a name="module_knexpress..Knexpress"></a>
-
-### knexpress~Knexpress
 Entry class for accessing the functionality of Knexpress.
 
-**Kind**: inner class of <code>[knexpress](#module_knexpress)</code>  
+#### constructor
 
-* [~Knexpress](#module_knexpress..Knexpress)
-    * [new Knexpress()](#new_module_knexpress..Knexpress_new)
-    * [.Model](#module_knexpress..Knexpress+Model) : <code>Model</code>
-    * [.register()](#module_knexpress..Knexpress+register)
-
-<a name="new_module_knexpress..Knexpress_new"></a>
-
-#### new Knexpress()
 Creates a new Knexpress ORM instance.
 
-<a name="module_knexpress..Knexpress+Model"></a>
+**Parameters**
 
-#### knexpress.Model : <code>Model</code>
-Base Model class corresponding to the current ORM instance.
+-   `knex`  
+-   `options`  
 
-**Kind**: instance property of <code>[Knexpress](#module_knexpress..Knexpress)</code>  
-<a name="module_knexpress..Knexpress+register"></a>
-
-#### knexpress.register()
-Registers a static Model object to the list of database objects.
-
-**Kind**: instance method of <code>[Knexpress](#module_knexpress..Knexpress)</code>  
 **Properties**
 
-| Name | Type | Description |
-| --- | --- | --- |
-| Model | <code>Model</code> | Model to be registered. |
-| name | <code>string</code> | Name under which the Model shall be registered. |
+-   `knex` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Knex client instance to which database functions
+    shall be bound.
 
-<a name="module_knexpress..Model"></a>
+#### Model
 
-### knexpress~Model
-Base Model class which shall be extended by the attributes of a databaseobject.
+Base Model class corresponding to the current ORM instance.
 
-**Kind**: inner class of <code>[knexpress](#module_knexpress)</code>  
+#### register
 
-* [~Model](#module_knexpress..Model)
-    * [new Model()](#new_module_knexpress..Model_new)
-    * _instance_
-        * [.del()](#module_knexpress..Model+del)
-        * [.save()](#module_knexpress..Model+save)
-    * _static_
-        * [.tableName](#module_knexpress..Model.tableName) : <code>string</code>
-        * [.idAttribute](#module_knexpress..Model.idAttribute) : <code>string</code>
+Registers a static Model object to the list of database objects.
 
-<a name="new_module_knexpress..Model_new"></a>
+**Parameters**
 
-#### new Model()
+-   `model`  
+-   `name`  
+
+**Properties**
+
+-   `Model` **Model** Model to be registered.
+
+### Model
+
+Base Model class which shall be extended by the attributes of a database
+object.
+
+#### constructor
+
 Creates a new Model instance.
 
-<a name="module_knexpress..Model+del"></a>
+**Parameters**
 
-#### model.del()
+-   `props`  
+
+**Properties**
+
+-   `props` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Initial properties of the instance.
+
+#### del
+
 Queues the deletion of the current Model from the database.
 
-**Kind**: instance method of <code>[Model](#module_knexpress..Model)</code>  
-<a name="module_knexpress..Model+save"></a>
+#### save
 
-#### model.save()
-Queues saving (creating or updating) the current Model in the database.If the 'idAttribute' of the current instance is set, then this methodqueues an update query based on it. Otherwise, a new Model gets insertedinto the database.
+Queues saving (creating or updating) the current Model in the database.
+If the 'idAttribute' of the current instance is set, then this method
+queues an update query based on it. Otherwise, a new Model gets inserted
+into the database.
 
-**Kind**: instance method of <code>[Model](#module_knexpress..Model)</code>  
-<a name="module_knexpress..Model.tableName"></a>
+#### idAttribute
 
-#### Model.tableName : <code>string</code>
-Case-sensitive name of the database table which corresponds to the Model.
-
-**Kind**: static property of <code>[Model](#module_knexpress..Model)</code>  
-<a name="module_knexpress..Model.idAttribute"></a>
-
-#### Model.idAttribute : <code>string</code>
 ID attribute, which is used as the primary key of the Model.
 
-**Kind**: static property of <code>[Model](#module_knexpress..Model)</code>  
+#### tableName
 
-[Bookshelf]: http://bookshelfjs.org
-[Knex]: http://knexjs.org
+Case-sensitive name of the database table which corresponds to the Model.
+
+### DbObjectAlreadyRegisteredError
+
+**Extends Error**
+
+An error which gets thrown when an attempt is made to register a database
+object multiple times.
+
+**Properties**
+
+-   `name` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Name of the database object in question.
+
+### EmptyDbObjectError
+
+**Extends Error**
+
+An error which gets thrown when an attempt is made to store an empty database
+object.
+
+### InexistentDbObjectError
+
+**Extends Error**
+
+An error which gets thrown when an attempt is made to modify an inexistent
+database object.

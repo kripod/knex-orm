@@ -1,5 +1,3 @@
-/** @module knexpress */
-
 const knexQueryMethods = require('knex/lib/query/methods');
 
 const KNEX_IGNORED_STATIC_METHODS = [
