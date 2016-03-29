@@ -1,7 +1,6 @@
 /** @module knexpress */
 
-const snakeCase = require('lodash.snakecase');
-const pluralize = require('pluralize');
+const inflection = require('inflection');
 const Config = require('./config');
 const Relation = require('./relation');
 const RelationType = require('./enums/relation-type');
@@ -17,7 +16,9 @@ class Model {
    * Case-sensitive name of the database table which corresponds to the Model.
    * @type string
    */
-  static get tableName() { return pluralize(snakeCase(this.name)); }
+  static get tableName() {
+    return inflection.pluralize(inflection.underscore(this.name));
+  }
 
   /**
    * ID attribute, which is used as the primary key of the Model.

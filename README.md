@@ -15,10 +15,6 @@ with the power of [Knex][] and modern ECMAScript features.
 Knexpress aims to provide a wrapper for every significant method of [Knex][],
 while keeping the ORM code overhead as low as possible.
 
-The project can be run natively with Node.js >=5 by using the `--es-staging` and
-`--use-strict` runtime flags, but in order to provide compatibility with older
-Node versions, the source code of the package is transpiled to ES5.
-
 ## Getting started
 
 Installing [Knex][] and at least one of its supported database drivers as peer
