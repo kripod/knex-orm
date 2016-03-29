@@ -1,7 +1,7 @@
 const test = require('tape');
-const Database = require('./database');
-const Company = require('./models/company');
-const Employee = require('./models/employee');
+const Database = require('./../example/database');
+const Company = require('./../example/models/company');
+const Employee = require('./../example/models/employee');
 
 const NEW_EMPLOYEE_PROPS = {
   name: 'Olympia Pearson',
@@ -60,7 +60,7 @@ test('modifying existing models', (t) => {
   );
 
   // Cover the avoidance of unnecessary queries
-  t.throws(() => newEmployee.save(), /EmptyDbObjectError/);
+  t.throws(() => newEmployee.save(), 'should throw EmptyDbObjectError');
   t.equals(employee.save().toString(),
     'select * from "employees" where "id" = 5'
   );
@@ -69,7 +69,7 @@ test('modifying existing models', (t) => {
 });
 
 test('deleting existing models', (t) => {
-  t.throws(() => newEmployee.del(), /InexistentDbObjectError/);
+  t.throws(() => newEmployee.del(), 'should throw InexistentDbObjectError');
 
   const employee = new Employee({ id: 1 });
   t.equals(employee.del().toString(),

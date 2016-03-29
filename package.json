@@ -16,13 +16,13 @@
     "lib": "./lib"
   },
   "scripts": {
-    "start": "node --es-staging --use-strict ./example",
-    "build": "rimraf ./lib && babel ./src -d ./lib -s",
+    "start": "babel-node ./example",
+    "build": "babel ./src -d ./lib -s",
     "watch": "npm run build -- -w",
     "prepublish": "npm run build",
     "init-db": "rimraf ./dev.sqlite3 && knex migrate:latest && knex seed:run",
     "docs": "jsdoc2md \"./src/**/*.js\" -t ./jsdoc2md/README.hbs > ./README.md",
-    "test": "rimraf ./coverage && node --es-staging --use-strict ./node_modules/istanbul/lib/cli cover ./tests"
+    "test": "babel-node ./node_modules/isparta/bin/isparta cover ./tests"
   },
   "dependencies": {
     "lodash.snakecase": "^4.0.0",
@@ -37,7 +37,7 @@
     "codeclimate-test-reporter": "^0.3.1",
     "eslint": "^2.5.1",
     "eslint-config-airbnb": "^6.2.0",
-    "istanbul": "^0.4.2",
+    "isparta": "^4.0.0",
     "jsdoc": "^3.4.0",
     "jsdoc-to-markdown": "^1.3.3",
     "knex": "^0.10.0",
