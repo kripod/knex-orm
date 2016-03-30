@@ -8,6 +8,10 @@ const KNEX_IGNORED_STATIC_METHODS = [
   'queryBuilder',
 ];
 
-exports.KNEX_ALLOWED_STATIC_METHODS = knexQueryMethods.filter((item) =>
-  !KNEX_IGNORED_STATIC_METHODS.includes(item)
-);
+const Config = {
+  KNEX_ALLOWED_STATIC_METHODS: knexQueryMethods.filter((item) =>
+    !KNEX_IGNORED_STATIC_METHODS.includes(item)
+  ),
+};
+
+module.exports = Config;

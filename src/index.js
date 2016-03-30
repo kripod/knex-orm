@@ -9,16 +9,17 @@ const DEFAULT_OPTIONS = {
 
 /**
  * Entry class for accessing the functionality of Knexpress.
+ * @property {Object} knex Knex client corresponding to the ORM instance.
  */
 class Knexpress {
   /**
    * Creates a new Knexpress ORM instance.
-   * @property {Object} knex Knex client instance to which database functions
-   * shall be bound.
-   * @property {Object} [options] Additional options regarding ORM.
+   * @param {Object} knex Knex client instance to which database functions shall
+   * be bound.
+   * @param {Object} [options] Additional options regarding ORM.
    */
   // TODO:
-  // @property {boolean} [options.convertCase=true] If set to true, then the ORM
+  // @param {boolean} [options.convertCase=true] If set to true, then the ORM
   // will handle letter case convertion for strings automatically (between
   // camelCase and snake_case).
   constructor(knex, options) {
@@ -40,7 +41,7 @@ class Knexpress {
 
   /**
    * Base Model class corresponding to the current ORM instance.
-   * @type Model
+   * @type {Model}
    */
   get Model() {
     return modelFactory(this);
@@ -48,8 +49,9 @@ class Knexpress {
 
   /**
    * Registers a static Model object to the list of database objects.
-   * @property {Model} Model Model to be registered.
-   * @property {string} [name] Name under which the Model shall be registered.
+   * @param {Model} model Model to be registered.
+   * @param {string} [name] Name under which the Model shall be registered.
+   * @returns {Model} The Model which was registered.
    */
   register(model, name) {
     // Determine the Model's name and then check if it's already registered

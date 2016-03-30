@@ -12,7 +12,7 @@ const InexistentDbObjectError = require('./errors/inexistent-db-object-error');
 class Model {
   /**
    * Case-sensitive name of the database table which corresponds to the Model.
-   * @type string
+   * @type {string}
    */
   static get tableName() {
     return inflection.pluralize(inflection.underscore(this.name));
@@ -20,13 +20,13 @@ class Model {
 
   /**
    * ID attribute, which is used as the primary key of the Model.
-   * @type string
+   * @type {string}
    */
   static get idAttribute() { return 'id'; }
 
   /**
    * Creates a new Model instance.
-   * @property {Object} props Initial properties of the instance.
+   * @param {Object} props Initial properties of the instance.
    */
   constructor(props) {
     // Set the initial properties of the instance

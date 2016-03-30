@@ -56,7 +56,7 @@ const Database = new Knexpress(
  * @extends Database.Model
  * @property {number} rank Rank of the company, which serves as a primary key.
  * @property {string} name Name of the company.
- * @property {string?} email E-mail address of the company, which shall be
+ * @property {?string} email E-mail address of the company, which shall be
  * unique, but optional.
  */
 class Company extends Database.Model {
@@ -126,19 +126,19 @@ Company.where({ email: 'info@famouscompany.example' })
 
 Entry class for accessing the functionality of Knexpress.
 
+**Properties**
+
+-   `knex` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Knex client corresponding to the ORM instance.
+
 #### constructor
 
 Creates a new Knexpress ORM instance.
 
 **Parameters**
 
--   `knex`  
--   `options`  
-
-**Properties**
-
--   `knex` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Knex client instance to which database functions
-    shall be bound.
+-   `knex` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Knex client instance to which database functions shall
+    be bound.
+-   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)=** Additional options regarding ORM.
 
 #### Model
 
@@ -150,12 +150,10 @@ Registers a static Model object to the list of database objects.
 
 **Parameters**
 
--   `model`  
--   `name`  
+-   `model` **Model** Model to be registered.
+-   `name` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)=** Name under which the Model shall be registered.
 
-**Properties**
-
--   `Model` **Model** Model to be registered.
+Returns **Model** The Model which was registered.
 
 ### Model
 
@@ -167,10 +165,6 @@ object.
 Creates a new Model instance.
 
 **Parameters**
-
--   `props`  
-
-**Properties**
 
 -   `props` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Initial properties of the instance.
 

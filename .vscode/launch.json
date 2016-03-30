@@ -12,9 +12,7 @@
       "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
-        "--nolazy",
-        "--es-staging",
-        "--use-strict"
+        "${workspaceRoot}/node_modules/babel-cli/bin/babel-node"
       ],
       "env": {
         "NODE_ENV": "development"
