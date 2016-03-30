@@ -46,20 +46,22 @@ class Model {
     });
   }
 
-  hasOne(Target, foreignKey) {
-    return new Relation(this, RelationType.ONE_TO_ONE, Target, foreignKey);
+  static hasOne(Target, foreignKey) {
+    return new Relation(this, Target, RelationType.ONE_TO_ONE, foreignKey);
   }
 
-  hasMany(Target, foreignKey) {
-    return new Relation(this, RelationType.ONE_TO_MANY, Target, foreignKey);
+  static hasMany(Target, foreignKey) {
+    return new Relation(this, Target, RelationType.ONE_TO_MANY, foreignKey);
   }
 
-  belongsTo(Target, foreignKey) {
-    return new Relation(this, RelationType.MANY_TO_ONE, Target, foreignKey);
+  static belongsTo(Target, foreignKey) {
+    return new Relation(this, Target, RelationType.MANY_TO_ONE, foreignKey);
   }
 
   /**
    * Queues the deletion of the current Model from the database.
+   * @throws {InexistentDbObjectError}
+   * @returns {Object} A Knex query object.
    */
   del() {
     const knexObject = this._getKnexObject();
@@ -76,6 +78,8 @@ class Model {
    * If the 'idAttribute' of the current instance is set, then this method
    * queues an update query based on it. Otherwise, a new Model gets inserted
    * into the database.
+   * @throws {EmptyDbObjectError}
+   * @returns {Object} A Knex query object.
    */
   save() {
     const knexObject = this._getKnexObject();

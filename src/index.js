@@ -51,6 +51,7 @@ class Knexpress {
    * Registers a static Model object to the list of database objects.
    * @param {Model} model Model to be registered.
    * @param {string} [name] Name under which the Model shall be registered.
+   * @throws {DbObjectAlreadyRegisteredError}
    * @returns {Model} The Model which was registered.
    */
   register(model, name) {
