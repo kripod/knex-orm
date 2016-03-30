@@ -1,5 +1,6 @@
 const inflection = require('inflection');
 const Config = require('./config');
+const knexExtensions = require('./knex-extensions');
 const Relation = require('./relation');
 const RelationType = require('./enums/relation-type');
 const EmptyDbObjectError = require('./errors/empty-db-object-error');
@@ -138,17 +139,15 @@ module.exports = (parent) => {
     value: parent,
   });
 
-  // Inherit the static Knex methods of the corresponding DB table
-  for (const property of Object.getOwnPropertyNames(knex)) {
-    // Check whether the method is allowed
-    if (!Config.KNEX_ALLOWED_STATIC_METHODS.includes(property)) continue;
-
+  // Inherit Knex query methods of the corresponding DB table
+  for (const method of Config.KNEX_ALLOWED_QUERY_METHODS) {
     // Associate the function with the current object's base Knex state
-    Model[property] = function x(...args) {
+    Model[method] = function x(...args) {
       // In the current context, 'this' refers to a static Model object
-      const result = knex.from(this.tableName)[property](...args);
-      result._parentModel = this;
-      return result;
+      const queryBase = knex.from(this.tableName);
+      queryBase._parentModel = this;
+
+      return queryBase[method](...args);
     };
   }
 

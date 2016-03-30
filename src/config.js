@@ -1,6 +1,7 @@
-const knexQueryMethods = require('knex/lib/query/methods');
+const knexDefaultMethods = require('knex/lib/query/methods');
+const knexExtensions = require('./knex-extensions');
 
-const KNEX_IGNORED_STATIC_METHODS = [
+const KNEX_IGNORED_DEFAULT_METHODS = [
   'from',
   'fromJS',
   'into',
@@ -8,10 +9,15 @@ const KNEX_IGNORED_STATIC_METHODS = [
   'queryBuilder',
 ];
 
+const KNEX_ALLOWED_DEFAULT_METHODS = knexDefaultMethods.filter((item) =>
+  !KNEX_IGNORED_DEFAULT_METHODS.includes(item)
+);
+
 const Config = {
-  KNEX_ALLOWED_STATIC_METHODS: knexQueryMethods.filter((item) =>
-    !KNEX_IGNORED_STATIC_METHODS.includes(item)
-  ),
+  KNEX_ALLOWED_QUERY_METHODS: [
+    ...KNEX_ALLOWED_DEFAULT_METHODS,
+    ...Object.keys(knexExtensions),
+  ],
 };
 
 module.exports = Config;
