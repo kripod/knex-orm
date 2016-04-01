@@ -5,9 +5,8 @@ Extensions.withRelated = Extensions.fetchRelated =
     if (relationNames.length > 0) {
       // Apply each requested relation to the current query
       for (const relationName of relationNames) {
-        this._customProps.withRelated.push(
-          this._parentModel.related[relationName]
-        );
+        this._customProps.withRelated[relationName] =
+          this._parentModel.related[relationName];
       }
     } else {
       // If no arguments are given, then every related Model should be fetched

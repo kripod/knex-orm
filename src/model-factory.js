@@ -146,7 +146,7 @@ module.exports = (parent) => {
       const queryBase = knex.from(this.tableName);
       queryBase._parentModel = this;
       queryBase._customProps = {
-        withRelated: [],
+        withRelated: {},
       };
 
       return queryBase[method](...args);

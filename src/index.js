@@ -49,8 +49,41 @@ class Knexpress {
     // Override the client's query function to add support for relations
     const queryFn = this._knex.client.query;
     this._knex.client.query = function query(connection, obj) {
-      // TODO: Use this._withRelated
-      return queryFn(connection, obj);
+      return queryFn(connection, obj)
+        .then((mainResult) => {
+          // Wait for additional queries if necessary
+          const queries = [];
+
+          const relations = this._customProps.withRelated;
+          for (const relationName of Object.keys(relations)) {
+            const relation = relations[relationName];
+
+            queries.push(
+              queryFn(connection, relation.toQueryObj())
+                .then((relatedResult) => {
+                  const relatedModels = Array.isArray(relatedResult) ?
+                    relatedResult :
+                    [relatedResult];
+
+                  const mainModels = Array.isArray(mainResult) ?
+                    mainResult :
+                    [mainResult];
+
+                  // Pair related results with their parents
+                  for (const relatedModel of relatedModels) {
+                    /* mainModels.filter((mainModel) => {
+
+                    });
+                    mainModel[relationName] = relatedModel; */
+                  }
+                })
+            );
+          }
+
+          if (Array.isArray(mainResult)) {
+            
+          }
+        });
     };
   }
 

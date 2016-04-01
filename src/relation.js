@@ -34,6 +34,10 @@ class Relation {
     }
   }
 
+  toQueryObj() {
+    // TODO
+  }
+
   applyToQuery(knexQuery) {
     switch (this.type) {
       case RelationType.MANY_TO_ONE:
