@@ -6,16 +6,14 @@ const DEFAULT_OPTIONS = {
   convertCase: true,
 };
 
-/*
 // Inherit Knex query methods for the custom query builder
 for (const method of Config.KNEX_ALLOWED_QUERY_METHODS) {
   QueryBuilder[method] = function queryMethod(...args) {
     // In the current context, 'this' refers to a static QueryBuilder object
-    const qb = new QueryBuilder(this);
-    return qb[method](...args);
+    const qb = new QueryBuilder(this._parent);
+    return qb._knexQb[method](...args);
   };
 }
-*/
 
 /**
  * Entry class for accessing the functionality of Knexpress.
