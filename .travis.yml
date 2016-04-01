@@ -16,6 +16,10 @@ deploy:
     secure: ycFkwt5WgNcDWTD6Mbr332L/xUtNZaBOe2xjBbcapPt8GbHikH++3T2b8eoeLdIh0pTB95ZtXLjcA8ln4aqpAWqdvMdRtEg44e+snwQDnUTvm76UmLTi/6yFl156CKJ5mJ/fBCvgHjjdHhyFDuUvMmKfVKVGVHt5IQBWNmxvYFVdFh3+IXRzIWTz3WCvt7H/AJP3eFUVlz8Qoo8sWYJj4nhNLz93C8LnViB10ZkQormF0zJVtNIIk/pPuZNxgK9OG1/di7ZGLXDs1epReY6+k/0i8hzJ456cVDdj8g1fUzDnk9wxl6me2n87ps6TbqIwsQ9+x+gGz/80LDCRNrDwrS6JYlJp9CNj550odWFafwCyidL9Tkolsl2LAyukanXH8oBgY0D9hSUZ09ZawH/hViEWSiE8K+W0c9hiiIUVMrfO+y5/u2Em4PZWtaBz2N7gF0r7whU9hunW+c8Avx7cQmsJO+lEhjmcirWvMMKq03KW4gegwzUt7y/72BdvBYxXaAxv+zV2+k2hM237dOKYnz5DTo/pfzcMhad/l5Owm3m1JadNGU1OixueWrp1f5r7IoT9oNzo2qKcJ/G1HgCX8dyzbaMsIUURNnJmLo2yAJzAK1MAvzjDkWE0vkgA60hhxYXVgXTJ8/u93bh/qkmvg8ttwHm4XSwlXPJe9YPMRsQ=
   on:
     tags: true
+notifications:
+  webhooks:
+    urls:
+    - https://webhooks.gitter.im/e/ce58f2688d67dbcd287f
 addons:
   code_climate:
     repo_token: 67d8708e128fef6d512ddbf1b2d0306c6f060e2f60e6812fda6b9f1b17145ffc

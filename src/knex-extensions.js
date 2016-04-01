@@ -1,15 +1,20 @@
-module.exports = {
-  withRelated(...args) {
-    // If no arguments are given, then every relation shall be loaded
-    const relationNames = args.length > 0 ?
-      args :
-      Object.keys(this._parentModel.related);
+const Extensions = {};
 
-    // Apply each requested relation to the current query
-    for (const relationName of relationNames) {
-      this._parentModel.related[relationName].applyToQuery(this);
+Extensions.withRelated = Extensions.fetchRelated =
+  function withRelated(...relationNames) {
+    if (relationNames.length > 0) {
+      // Apply each requested relation to the current query
+      for (const relationName of relationNames) {
+        this._customProps.withRelated.push(
+          this._parentModel.related[relationName]
+        );
+      }
+    } else {
+      // If no arguments are given, then every related Model should be fetched
+      this._customProps.withRelated = this._parentModel.related;
     }
 
     return this;
-  },
-};
+  };
+
+module.exports = Extensions;

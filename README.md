@@ -6,6 +6,7 @@ Knex-based object-relational mapping for JavaScript.
 [![Build Status](https://img.shields.io/travis/kripod/knexpress/master.svg)](https://travis-ci.org/kripod/knexpress)
 [![Code Coverage](https://img.shields.io/codeclimate/coverage/github/kripod/knexpress.svg)](https://codeclimate.com/github/kripod/knexpress/coverage)
 [![Code Climate](https://img.shields.io/codeclimate/github/kripod/knexpress.svg)](https://codeclimate.com/github/kripod/knexpress)
+[![Gitter](https://img.shields.io/gitter/room/kripod/knexpress.svg)](https://gitter.im/kripod/knexpress)
 
 ## Introduction
 

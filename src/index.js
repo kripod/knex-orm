@@ -23,20 +23,35 @@ class Knexpress {
   // will handle letter case convertion for strings automatically (between
   // camelCase and snake_case).
   constructor(knex, options) {
-    // Create a shallow copy of the Knex client and extend its methods
-    this.knex = Object.assign({}, knex, knexExtensions);
-    this.knex.client.QueryBuilder.prototype = Object.assign(
-      knex.client.QueryBuilder.prototype,
-      knexExtensions
-    );
+    // Initialize private properties
+    Object.defineProperty(this, '_knex', { writable: true });
+    Object.defineProperty(this, '_models', { value: {} });
+
+    // Initialize the given Knex client instance
+    this.knex = knex;
 
     // Parse and store options
     this.options = Object.assign(DEFAULT_OPTIONS, options);
+  }
 
-    // Initialize Model registry
-    Object.defineProperty(this, '_models', {
-      value: {},
-    });
+  get knex() {
+    return this._knex;
+  }
+
+  set knex(value) {
+    // Create a shallow copy of the Knex client and extend its methods
+    this._knex = Object.assign({}, value, knexExtensions);
+    this._knex.client.QueryBuilder.prototype = Object.assign(
+      value.client.QueryBuilder.prototype,
+      knexExtensions
+    );
+
+    // Override the client's query function to add support for relations
+    const queryFn = this._knex.client.query;
+    this._knex.client.query = function query(connection, obj) {
+      // TODO: Use this._withRelated
+      return queryFn(connection, obj);
+    };
   }
 
   /**
