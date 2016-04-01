@@ -2,8 +2,7 @@ import inflection from 'inflection';
 import QueryBuilder from './query-builder';
 import Relation from './relation';
 import RelationType from './enums/relation-type';
-import EmptyDbObjectError from './errors/empty-db-object-error';
-import InexistentDbObjectError from './errors/inexistent-db-object-error';
+import { EmptyDbObjectError, InexistentDbObjectError } from './errors';
 
 /**
  * Base Model class which shall be extended by the attributes of a database

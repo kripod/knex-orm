@@ -1,7 +1,7 @@
-const test = require('tape');
-const Database = require('./../example/database');
-const Company = require('./../example/models/company');
-const Employee = require('./../example/models/employee');
+import test from 'tape';
+import Database from './../example/database';
+import Company from './../example/models/company';
+import Employee from './../example/models/employee';
 
 const NEW_EMPLOYEE_PROPS = {
   name: 'Olympia Pearson',

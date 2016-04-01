@@ -1,8 +1,7 @@
 import Config from './config';
 import Model from './model';
 import QueryBuilder from './query-builder';
-import DbObjectAlreadyRegisteredError from
-  './errors/db-object-already-registered-error';
+import { DbObjectAlreadyRegisteredError } from './errors';
 
 const DEFAULT_OPTIONS = {
   convertCase: true,

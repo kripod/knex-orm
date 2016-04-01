@@ -1,5 +1,5 @@
-const knexDefaultMethods = require('knex/lib/query/methods');
-const knexExtensions = require('./knex-extensions');
+import knexDefaultMethods from 'knex/lib/query/methods';
+import knexExtensions from './knex-extensions';
 
 const KNEX_IGNORED_DEFAULT_METHODS = [
   'from',
@@ -20,4 +20,4 @@ const Config = {
   ],
 };
 
-module.exports = Config;
+export default Config;

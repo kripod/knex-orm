@@ -10,4 +10,4 @@ const RelationType = {
   MANY_TO_MANY: 4,
 };
 
-module.exports = RelationType;
+export default RelationType;
