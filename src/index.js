@@ -1,11 +1,21 @@
 import Config from './config';
-import Model from './model';
 import QueryBuilder from './query-builder';
 import { DbObjectAlreadyRegisteredError } from './errors';
 
 const DEFAULT_OPTIONS = {
   convertCase: true,
 };
+
+/*
+// Inherit Knex query methods for the custom query builder
+for (const method of Config.KNEX_ALLOWED_QUERY_METHODS) {
+  QueryBuilder[method] = function queryMethod(...args) {
+    // In the current context, 'this' refers to a static QueryBuilder object
+    const qb = new QueryBuilder(this);
+    return qb[method](...args);
+  };
+}
+*/
 
 /**
  * Entry class for accessing the functionality of Knexpress.
@@ -32,8 +42,6 @@ export default class Knexpress {
 
     // Parse and store options
     this.options = Object.assign(DEFAULT_OPTIONS, options);
-
-    console.log(this.Model);
   }
 
   /**
@@ -43,33 +51,11 @@ export default class Knexpress {
   get Model() {
     if (!this._model) {
       // Clone the original class
-      this._model = Object.assign({}, Model, { _parent: this });
+      this._model = this._requireUncached('./model');
+      this._model._parent = this;
     }
 
     return this._model;
-  }
-
-  /**
-   * Base QueryBuilder class corresponding to the current ORM instance.
-   * @type {QueryBuilder}
-   */
-  get QueryBuilder() {
-    if (!this._queryBuilder) {
-      // Clone the original class
-      this._queryBuilder = Object.assign({}, QueryBuilder);
-
-      // Inherit Knex query methods of the corresponding DB table
-      for (const method of Config.KNEX_ALLOWED_QUERY_METHODS) {
-        this._queryBuilder[method] = function queryMethod(...args) {
-          // In the current context, 'this' should refer to a static
-          // QueryBuilder object
-          const qb = new QueryBuilder(this.constructor.tableName);
-          return qb[method](...args);
-        };
-      }
-    }
-
-    return this._queryBuilder;
   }
 
   /**
@@ -88,5 +74,10 @@ export default class Knexpress {
 
     this._models[modelName] = model;
     return model;
+  }
+
+  _requireUncached(modulePath) {
+    delete require.cache[require.resolve(modulePath)];
+    return require(modulePath).default;
   }
 }

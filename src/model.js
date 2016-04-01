@@ -27,8 +27,8 @@ export default class Model extends QueryBuilder {
    * Creates a new Model instance.
    * @param {Object} props Initial properties of the instance.
    */
-  constructor(props) {
-    super();
+  constructor(props = {}) {
+    super(Model._parent);
 
     // Set the initial properties of the instance
     for (const key of Object.keys(props)) {

@@ -1,10 +1,8 @@
-import Config from './config';
-
 export default class QueryBuilder {
-  constructor() {
-    /*Object.defineProperty(this, '_knexQb', {
-      value: this.constructor._parent.knex.from(tableName),
-    });*/
+  constructor(parent) {
+    Object.defineProperty(this, '_knexQb', {
+      value: parent.knex.from(this.constructor.tableName),
+    });
   }
 
   withRelated(props) {
