@@ -1,5 +1,5 @@
-const inflection = require('inflection');
-const RelationType = require('./enums/relation-type');
+import inflection from 'inflection';
+import RelationType from './enums/relation-type';
 
 /**
  * Represents a relation between Models.
@@ -12,7 +12,7 @@ const RelationType = require('./enums/relation-type');
  * (ID attribute) of the joinable database table.
  * @private
  */
-class Relation {
+export default class Relation {
   constructor(origin, target, type, foreignKey) {
     this.origin = origin;
 
@@ -60,5 +60,3 @@ class Relation {
     }
   }
 }
-
-module.exports = Relation;

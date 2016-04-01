@@ -2,8 +2,7 @@ import Database from './database';
 import Company from './models/company';
 import Employee from './models/employee';
 
-console.log(Employee.first().withRelated('company').toString());
-console.log(Company.withRelated('employee').toString());
+console.log(new Company());
 
 /* Company.where({ rank: 3 }).then((company) => {
   console.log(company);

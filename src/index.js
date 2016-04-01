@@ -1,17 +1,25 @@
-const knexExtensions = require('./knex-extensions');
-const modelFactory = require('./model-factory');
-const DbObjectAlreadyRegisteredError =
-  require('./errors/db-object-already-registered-error');
+import Config from './config';
+import QueryBuilder from './query-builder';
+import { DbObjectAlreadyRegisteredError } from './errors';
 
 const DEFAULT_OPTIONS = {
   convertCase: true,
 };
 
+// Inherit Knex query methods for the custom query builder
+for (const method of Config.KNEX_ALLOWED_QUERY_METHODS) {
+  QueryBuilder[method] = function queryMethod(...args) {
+    // In the current context, 'this' refers to a static QueryBuilder object
+    const qb = new QueryBuilder(this._parent);
+    return qb._knexQb[method](...args);
+  };
+}
+
 /**
  * Entry class for accessing the functionality of Knexpress.
  * @property {Object} knex Knex client corresponding to the ORM instance.
  */
-class Knexpress {
+export default class Knexpress {
   /**
    * Creates a new Knexpress ORM instance.
    * @param {Object} knex Knex client instance to which database functions shall
@@ -27,64 +35,11 @@ class Knexpress {
     Object.defineProperty(this, '_knex', { writable: true });
     Object.defineProperty(this, '_models', { value: {} });
 
-    // Initialize the given Knex client instance
+    // Store the given Knex client instance
     this.knex = knex;
 
     // Parse and store options
     this.options = Object.assign(DEFAULT_OPTIONS, options);
-  }
-
-  get knex() {
-    return this._knex;
-  }
-
-  set knex(value) {
-    // Create a shallow copy of the Knex client and extend its methods
-    this._knex = Object.assign({}, value, knexExtensions);
-    this._knex.client.QueryBuilder.prototype = Object.assign(
-      value.client.QueryBuilder.prototype,
-      knexExtensions
-    );
-
-    // Override the client's query function to add support for relations
-    const queryFn = this._knex.client.query;
-    this._knex.client.query = function query(connection, obj) {
-      return queryFn(connection, obj)
-        .then((mainResult) => {
-          // Wait for additional queries if necessary
-          const queries = [];
-
-          const relations = this._customProps.withRelated;
-          for (const relationName of Object.keys(relations)) {
-            const relation = relations[relationName];
-
-            queries.push(
-              queryFn(connection, relation.toQueryObj())
-                .then((relatedResult) => {
-                  const relatedModels = Array.isArray(relatedResult) ?
-                    relatedResult :
-                    [relatedResult];
-
-                  const mainModels = Array.isArray(mainResult) ?
-                    mainResult :
-                    [mainResult];
-
-                  // Pair related results with their parents
-                  for (const relatedModel of relatedModels) {
-                    /* mainModels.filter((mainModel) => {
-
-                    });
-                    mainModel[relationName] = relatedModel; */
-                  }
-                })
-            );
-          }
-
-          if (Array.isArray(mainResult)) {
-            
-          }
-        });
-    };
   }
 
   /**
@@ -92,7 +47,13 @@ class Knexpress {
    * @type {Model}
    */
   get Model() {
-    return modelFactory(this);
+    if (!this._model) {
+      // Clone the original class
+      this._model = this._requireUncached('./model');
+      this._model._parent = this;
+    }
+
+    return this._model;
   }
 
   /**
@@ -112,6 +73,9 @@ class Knexpress {
     this._models[modelName] = model;
     return model;
   }
-}
 
-module.exports = Knexpress;
+  _requireUncached(modulePath) {
+    delete require.cache[require.resolve(modulePath)];
+    return require(modulePath).default;
+  }
+}

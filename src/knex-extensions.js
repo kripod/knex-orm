@@ -16,4 +16,4 @@ Extensions.withRelated = Extensions.fetchRelated =
     return this;
   };
 
-module.exports = Extensions;
+export default Extensions;
