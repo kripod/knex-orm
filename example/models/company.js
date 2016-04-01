@@ -1,4 +1,4 @@
-const Database = require('./../database');
+import Database from './../database';
 
 class Company extends Database.Model {
   // The 'tableName' property is omitted on purpose
@@ -11,4 +11,4 @@ class Company extends Database.Model {
   }
 }
 
-module.exports = Database.register(Company);
+export default Database.register(Company);

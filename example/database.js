@@ -1,5 +1,5 @@
-const knex = require('knex');
-const Knexpress = require('./../src');
-const knexConfig = require('./../knexfile').development;
+import knex from 'knex';
+import Knexpress from './../src';
+import knexConfig from './../knexfile';
 
-module.exports = new Knexpress(knex(knexConfig));
+export default new Knexpress(knex(knexConfig.development));

@@ -1,15 +1,15 @@
-const inflection = require('inflection');
-const Config = require('./config');
-const Relation = require('./relation');
-const RelationType = require('./enums/relation-type');
-const EmptyDbObjectError = require('./errors/empty-db-object-error');
-const InexistentDbObjectError = require('./errors/inexistent-db-object-error');
+import inflection from 'inflection';
+import QueryBuilder from './query-builder';
+import Relation from './relation';
+import RelationType from './enums/relation-type';
+import EmptyDbObjectError from './errors/empty-db-object-error';
+import InexistentDbObjectError from './errors/inexistent-db-object-error';
 
 /**
  * Base Model class which shall be extended by the attributes of a database
  * object.
  */
-class Model {
+export default class Model extends QueryBuilder {
   /**
    * Case-sensitive name of the database table which corresponds to the Model.
    * @type {string}
@@ -29,6 +29,8 @@ class Model {
    * @param {Object} props Initial properties of the instance.
    */
   constructor(props) {
+    super();
+
     // Set the initial properties of the instance
     for (const key of Object.keys(props)) {
       this[key] = props[key];
@@ -131,27 +133,3 @@ class Model {
       .where({ [idAttribute]: this[idAttribute] });
   }
 }
-
-module.exports = (parent) => {
-  const knex = parent.knex;
-  Object.defineProperty(Model, '_parent', {
-    value: parent,
-  });
-
-  // Inherit Knex query methods of the corresponding DB table
-  for (const method of Config.KNEX_ALLOWED_QUERY_METHODS) {
-    // Associate the function with the current object's base Knex state
-    Model[method] = function queryMethod(...args) {
-      // In the current context, 'this' refers to a static Model object
-      const queryBase = knex.from(this.tableName);
-      queryBase._parentModel = this;
-      queryBase._customProps = {
-        withRelated: {},
-      };
-
-      return queryBase[method](...args);
-    };
-  }
-
-  return Model;
-};

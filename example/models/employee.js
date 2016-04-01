@@ -1,4 +1,4 @@
-const Database = require('./../database');
+import Database from './../database';
 
 class Employee extends Database.Model {
   static get tableName() { return 'employees'; }
@@ -10,4 +10,4 @@ class Employee extends Database.Model {
   }
 }
 
-module.exports = Database.register(Employee);
+export default Database.register(Employee);
