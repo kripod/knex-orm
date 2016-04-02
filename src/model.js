@@ -1,5 +1,4 @@
 import inflection from 'inflection';
-import QueryBuilder from './query-builder';
 import Relation from './relation';
 import RelationType from './enums/relation-type';
 import { EmptyDbObjectError, InexistentDbObjectError } from './errors';
@@ -8,7 +7,7 @@ import { EmptyDbObjectError, InexistentDbObjectError } from './errors';
  * Base Model class which shall be extended by the attributes of a database
  * object.
  */
-export default class Model extends QueryBuilder {
+export default class Model {
   /**
    * Case-sensitive name of the database table which corresponds to the Model.
    * @type {string}
@@ -28,8 +27,6 @@ export default class Model extends QueryBuilder {
    * @param {Object} props Initial properties of the instance.
    */
   constructor(props = {}) {
-    super(Model._parent);
-
     // Set the initial properties of the instance
     for (const key of Object.keys(props)) {
       this[key] = props[key];

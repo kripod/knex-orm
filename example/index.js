@@ -2,7 +2,11 @@ import Database from './database';
 import Company from './models/company';
 import Employee from './models/employee';
 
-console.log(new Company());
+Company.where({ rank: 3 }).orderBy('name').then((res) => {
+  console.log(res);
+});
+
+// console.log(Company.where({ id: 3 }).toString());
 
 /* Company.where({ rank: 3 }).then((company) => {
   console.log(company);

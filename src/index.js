@@ -1,19 +1,9 @@
-import Config from './config';
 import QueryBuilder from './query-builder';
 import { DbObjectAlreadyRegisteredError } from './errors';
 
 const DEFAULT_OPTIONS = {
   convertCase: true,
 };
-
-// Inherit Knex query methods for the custom query builder
-for (const method of Config.KNEX_ALLOWED_QUERY_METHODS) {
-  QueryBuilder[method] = function queryMethod(...args) {
-    // In the current context, 'this' refers to a static QueryBuilder object
-    const qb = new QueryBuilder(this._parent);
-    return qb._knexQb[method](...args);
-  };
-}
 
 /**
  * Entry class for accessing the functionality of Knexpress.
@@ -51,6 +41,15 @@ export default class Knexpress {
       // Clone the original class
       this._model = this._requireUncached('./model');
       this._model._parent = this;
+
+      // Inherit QueryBuilder's instance methods as static Model methods
+      for (const method of Object.getOwnPropertyNames(QueryBuilder.prototype)) {
+        this._model[method] = function queryMethod(...args) {
+          // In the current context, 'this' refers to a static Model object
+          const qb = new QueryBuilder(this._parent, this.tableName);
+          return qb[method](...args);
+        };
+      }
     }
 
     return this._model;
