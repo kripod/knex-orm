@@ -1,5 +1,6 @@
 {
   "extends": "airbnb/base",
+  "parser": "babel-eslint",
   "rules": {
     "max-len": ["error", 80],
     "valid-jsdoc": ["error", {

@@ -1,5 +1,6 @@
 import QueryBuilder from './query-builder';
 import { DbObjectAlreadyRegisteredError } from './errors';
+import { requireUncached } from './utils';
 
 const DEFAULT_OPTIONS = {
   convertCase: true,
@@ -39,15 +40,18 @@ export default class Knexpress {
   get Model() {
     if (!this._model) {
       // Clone the original class
-      this._model = this._requireUncached('./model');
+      this._model = requireUncached('./model');
       this._model._parent = this;
 
+      const qbMethodNames = Object.getOwnPropertyNames(QueryBuilder.prototype)
+        .filter((methodName) => methodName !== 'constructor');
+
       // Inherit QueryBuilder's instance methods as static Model methods
-      for (const method of Object.getOwnPropertyNames(QueryBuilder.prototype)) {
-        this._model[method] = function queryMethod(...args) {
+      for (const methodName of qbMethodNames) {
+        this._model[methodName] = function queryMethod(...args) {
           // In the current context, 'this' refers to a static Model object
           const qb = new QueryBuilder(this._parent, this.tableName);
-          return qb[method](...args);
+          return qb[methodName](...args);
         };
       }
     }
@@ -71,10 +75,5 @@ export default class Knexpress {
 
     this._models[modelName] = model;
     return model;
-  }
-
-  _requireUncached(modulePath) {
-    delete require.cache[require.resolve(modulePath)];
-    return require(modulePath).default;
   }
 }

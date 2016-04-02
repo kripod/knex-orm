@@ -6,6 +6,15 @@ Company.where({ rank: 3 }).orderBy('name').then((res) => {
   console.log(res);
 });
 
+async function test() {
+  console.log('parsing company...');
+  const company = await Company.where({ rank: 1 }).orderBy('name');
+  console.log('company:');
+  console.log(company);
+}
+
+test();
+
 // console.log(Company.where({ id: 3 }).toString());
 
 /* Company.where({ rank: 3 }).then((company) => {

@@ -16,11 +16,6 @@ export default class QueryBuilder {
     this._knexQb = this._knexQb.then(...args);
     return this._knexQb;
   }
-
-  catch(...args) {
-    this._knexQb = this._knexQb.catch(...args);
-    return this._knexQb;
-  }
 }
 
 // Inherit Knex query methods
