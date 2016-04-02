@@ -1,4 +1,4 @@
-import inflection from 'inflection';
+import { underscore, pluralize } from 'inflection';
 import Relation from './relation';
 import RelationType from './enums/relation-type';
 import { EmptyDbObjectError, InexistentDbObjectError } from './errors';
@@ -13,7 +13,7 @@ export default class Model {
    * @type {string}
    */
   static get tableName() {
-    return inflection.pluralize(inflection.underscore(this.name));
+    return pluralize(underscore(this.name));
   }
 
   /**

@@ -1,4 +1,4 @@
-import inflection from 'inflection';
+import { underscore } from 'inflection';
 import RelationType from './enums/relation-type';
 
 /**
@@ -16,47 +16,58 @@ export default class Relation {
   constructor(origin, target, type, foreignKey) {
     this.origin = origin;
 
-    // Get the Target's registered Model if Target is a string
+    // Get the target's registered Model if target is a string
     const modelRegistry = origin._parent._models;
     this.target = typeof target === 'string' ? modelRegistry[target] : target;
 
     this.type = type;
-
-    if (typeof foreignKey !== 'undefined') {
-      this.foreignKey = foreignKey;
-      return;
-    }
-
-    if (type === RelationType.MANY_TO_ONE) {
-      this.foreignKey = `${inflection.underscore(this.target.name)}_id`;
-    } else {
-      this.foreignKey = `${inflection.underscore(this.origin.name)}_id`;
-    }
+    this.foreignKey = foreignKey || `${underscore(this.target.name)}_id`;
   }
 
-  toQueryObj() {
-    // TODO
+  get originPropertyName() {
+    if (!this._originPropertyName) {
+      // Loop through the origin's relation declarations, searching for the name
+      for (const relationDeclaration of this.origin.related) {
+        if (relationDeclaration[1] === this) {
+          this._originPropertyName = relationDeclaration[0];
+          break;
+        }
+      }
+    }
+
+    return this._originPropertyName;
   }
 
-  applyToQuery(knexQuery) {
+  applyAsync(knex) {
     switch (this.type) {
-      case RelationType.MANY_TO_ONE:
-        return knexQuery.join(
-          this.target.tableName,
-          `${this.origin.tableName}.${this.foreignKey}`,
-          `${this.target.tableName}.${this.target.idAttribute}`
-        );
+      case RelationType.ONE_TO_MANY:
+      case RelationType.ONE_TO_ONE:
+        return knex.from(this.target.tableName)
+          .where({ [this.foreignKey]: this.origin.idAttribute })
+          .then((res) => {
+            let related = res;
 
-      case RelationType.MANY_TO_MANY:
-        // TODO
-        return knexQuery;
+            // Return only the first result if necessary
+            if (this.type === RelationType.ONE_TO_ONE) {
+              if (res.length > 1) {
+                // TODO: Throw an error about wrong relation type
+              } else {
+                related = res.length > 0 ? res[0] : null;
+              }
+            }
+
+            this.origin[this.originPropertyName] = related;
+          });
+
+      case RelationType.MANY_TO_ONE:
+        return knex.from(this.target.tableName)
+          .where({ [this.target.idAttribute]: this.origin[this.foreignKey] })
+          .then((related) => {
+            this.origin[this.originPropertyName] = related;
+          });
 
       default:
-        return knexQuery.join(
-          this.target.tableName,
-          `${this.origin.tableName}.${this.origin.idAttribute}`,
-          `${this.target.tableName}.${this.foreignKey}`
-        );
+        return null;
     }
   }
 }
