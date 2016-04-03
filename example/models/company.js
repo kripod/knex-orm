@@ -6,7 +6,7 @@ class Company extends Database.Model {
 
   static get related() {
     return {
-      employee: this.hasMany('Employee'),
+      employees: this.hasMany('Employee'),
     };
   }
 }

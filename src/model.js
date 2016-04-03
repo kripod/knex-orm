@@ -56,6 +56,15 @@ export default class Model {
     return new Relation(this, Target, RelationType.MANY_TO_ONE, foreignKey);
   }
 
+  // TODO: Remove this caching method, use a better solution
+  static getRelated() {
+    if (!this._related) {
+      this._related = this.related;
+    }
+
+    return this._related;
+  }
+
   /**
    * Queues the deletion of the current Model from the database.
    * @throws {InexistentDbObjectError}

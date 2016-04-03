@@ -2,13 +2,15 @@ import Database from './database';
 import Company from './models/company';
 import Employee from './models/employee';
 
+/*
 Company.where({ rank: 3 }).orderBy('name').then((res) => {
   console.log(res);
 });
+*/
 
 async function test() {
   console.log('parsing company...');
-  const company = await Company.where({ rank: 1 }).orderBy('name');
+  const company = await Company.where({ rank: 1 }).withRelated('employees').orderBy('name');
   console.log('company:');
   console.log(company);
 }

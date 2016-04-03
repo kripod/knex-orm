@@ -8,5 +8,10 @@
     "**/node_modules": true,
     "**/lib": true,
     "**/coverage": true
+  },
+
+  // Define special file associations for syntax highlighting
+  "files.associations": {
+    ".babelrc": "json"
   }
 }

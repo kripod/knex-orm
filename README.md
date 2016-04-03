@@ -115,8 +115,9 @@ Company.where({ email: 'info@famouscompany.example' })
 
 -   Associations based on Model relationships
 -   Parse ordinary [Knex][] responses as Models if possible
--   Option to automatically convert the letter case of strings (between camelCase
-    and snake_case)
+-   Option to automatically convert the letter case of strings (between
+    camelCase and snake_case)
+-   Custom defaults for automatic SQL attribute formatting
 -   Optional Model property validation
 
 <a name="api-reference"></a>

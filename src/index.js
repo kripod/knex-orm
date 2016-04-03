@@ -50,7 +50,7 @@ export default class Knexpress {
       for (const methodName of qbMethodNames) {
         this._model[methodName] = function queryMethod(...args) {
           // In the current context, 'this' refers to a static Model object
-          const qb = new QueryBuilder(this._parent, this.tableName);
+          const qb = new QueryBuilder(this);
           return qb[methodName](...args);
         };
       }

@@ -5,21 +5,14 @@
       "name": "Launch example",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/example/index.js",
-      "stopOnEntry": false,
-      "args": [],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
+      "program": "${workspaceRoot}/example/index.js",
       "runtimeArgs": [
         "${workspaceRoot}/node_modules/babel-cli/bin/babel-node"
       ],
       "env": {
         "NODE_ENV": "development"
-      },
-      "externalConsole": false,
-      "sourceMaps": false,
-      "outDir": null
+      }
     }
   ]
 }
