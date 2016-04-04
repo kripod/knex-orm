@@ -14,19 +14,17 @@ export default class QueryBuilder {
 
   withRelated(...props) {
     const relationNames = [].concat.apply([], props);
+    const relationEntries = Object.entries(this.model.related);
 
+    // Filter the given relations by name if necessary
     if (relationNames.length > 0) {
-      // Fetch the given relations by name
-      for (const [name, relation] of Object.entries(this.model.getRelated())) {
-        if (relationNames.includes(name)) {
-          this._relations.add(relation);
-        }
-      }
-    } else {
-      // Fetch every relation if no parameters are given
-      for (const relation of Object.values(this.model.getRelated())) {
-        this._relations.add(relation);
-      }
+      relationEntries.filter(([name]) => relationNames.includes(name));
+    }
+
+    // Store the filtered relations
+    for (const [name, relation] of relationEntries) {
+      relation.name = name;
+      this._relations.add(relation);
     }
 
     return this;

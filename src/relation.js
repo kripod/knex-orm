@@ -24,20 +24,6 @@ export default class Relation {
     this.foreignKey = foreignKey || `${underscore(this.origin.name)}_id`;
   }
 
-  get originPropertyName() {
-    if (!this._originPropertyName) {
-      // Loop through the origin's relation declarations, searching for the name
-      for (const [name, relation] of Object.entries(this.origin.getRelated())) {
-        if (relation === this) {
-          this._originPropertyName = name;
-          break;
-        }
-      }
-    }
-
-    return this._originPropertyName;
-  }
-
   applyAsync(knex, originInstance) {
     const model = originInstance;
 
@@ -58,14 +44,14 @@ export default class Relation {
               }
             }
 
-            model[this.originPropertyName] = related;
+            model[this.name] = related;
           });
 
       case RelationType.MANY_TO_ONE:
         return knex.from(this.target.tableName)
           .where({ [this.target.idAttribute]: model[this.foreignKey] })
           .then((related) => {
-            model[this.originPropertyName] = related;
+            model[this.name] = related;
           });
 
       default:
