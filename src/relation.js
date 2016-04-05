@@ -24,34 +24,51 @@ export default class Relation {
     this.foreignKey = foreignKey || `${underscore(this.origin.name)}_id`;
   }
 
-  applyAsync(knex, originInstance) {
-    const model = originInstance;
+  applyAsync(knex, originInstances) {
+    const models = originInstances;
 
     switch (this.type) {
       case RelationType.ONE_TO_MANY:
       case RelationType.ONE_TO_ONE:
         return knex.from(this.target.tableName)
-          .where({ [this.foreignKey]: model[this.origin.idAttribute] })
-          .then((res) => {
-            let related = res;
+          .whereIn(
+            this.foreignKey,
+            models.map((model) => model[this.origin.idAttribute])
+          )
+          .then((relatedModels) => {
+            for (const relatedModel of relatedModels) {
+              // Pair up the related Model with its origin
+              const foreignValue = relatedModel[this.foreignKey];
+              const origin = models.find((model) =>
+                model[this.origin.idAttribute] === foreignValue
+              );
 
-            // Return only the first result if necessary
-            if (this.type === RelationType.ONE_TO_ONE) {
-              if (res.length > 1) {
-                // TODO: Throw an error about wrong relation type
-              } else {
-                related = res.length > 0 ? res[0] : null;
+              if (origin) {
+                if (!origin[this.name]) origin[this.name] = [];
+                origin[this.name].push(relatedModel);
               }
             }
-
-            model[this.name] = related;
           });
 
       case RelationType.MANY_TO_ONE:
         return knex.from(this.target.tableName)
-          .where({ [this.target.idAttribute]: model[this.foreignKey] })
-          .then((related) => {
-            model[this.name] = related;
+          .whereIn(
+            this.target.idAttribute,
+            models.map((model) => model[this.foreignKey])
+          )
+          .then((relatedModels) => {
+            for (const relatedModel of relatedModels) {
+              // Pair up the related Model with its origin
+              const foreignValue = relatedModel[this.target.idAttribute];
+              const origin = models.find((model) =>
+                model[this.foreignKey] === foreignValue
+              );
+
+              if (origin) {
+                if (!origin[this.name]) origin[this.name] = [];
+                origin[this.name].push(relatedModel);
+              }
+            }
           });
 
       default:

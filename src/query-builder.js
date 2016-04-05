@@ -1,4 +1,5 @@
 import Config from './config';
+import { flattenArray } from './utils';
 
 export default class QueryBuilder {
   constructor(Model) {
@@ -13,7 +14,7 @@ export default class QueryBuilder {
   }
 
   withRelated(...props) {
-    const relationNames = [].concat.apply([], props);
+    const relationNames = flattenArray(props);
     const relationEntries = Object.entries(this.model.related);
 
     // Filter the given relations by name if necessary
@@ -41,7 +42,7 @@ export default class QueryBuilder {
 
         for (const relation of this._relations) {
           // TODO: Add support for result sets which return multiple results
-          awaitableQueries.push(relation.applyAsync(knex, res[0]));
+          awaitableQueries.push(relation.applyAsync(knex, res));
         }
 
         return Promise.all(awaitableQueries);
