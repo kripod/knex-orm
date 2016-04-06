@@ -9,7 +9,10 @@ Company.where({ rank: 3 }).orderBy('name').then((res) => {
 */
 
 async function test() {
-  const companies = await Company.withRelated('employees').orderBy('name');
+  const companies = await Company
+    .withRelated('employees')
+    .orderBy('name')
+    .first();
   console.log('Companies:');
   console.log(companies);
 

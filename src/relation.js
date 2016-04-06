@@ -21,10 +21,12 @@ export default class Relation {
     this.target = typeof Target === 'string' ? modelRegistry[Target] : Target;
 
     this.type = type;
+    this.foreignKey = foreignKey;
   }
 
-  _executeQuery(knex, originInstances, originAttribute, targetAttribute) {
+  _executeQuery(originAttribute, targetAttribute, ...originInstances) {
     const models = originInstances;
+    const knex = this.origin._parent.knex;
 
     return knex.from(this.target.tableName)
       .whereIn(
@@ -47,23 +49,21 @@ export default class Relation {
       });
   }
 
-  applyAsync(knex, originInstances) {
+  applyAsync(...originInstances) {
     switch (this.type) {
       case RelationType.ONE_TO_MANY:
       case RelationType.ONE_TO_ONE:
         return this._executeQuery(
-          knex,
-          originInstances,
           this.foreignKey || `${underscore(this.origin.name)}_id`,
-          this.origin.idAttribute
+          this.origin.idAttribute,
+          ...originInstances
         );
 
       case RelationType.MANY_TO_ONE:
         return this._executeQuery(
-          knex,
-          originInstances,
           this.target.idAttribute,
-          this.foreignKey || `${underscore(this.target.name)}_id`
+          this.foreignKey || `${underscore(this.target.name)}_id`,
+          ...originInstances
         );
 
       default:

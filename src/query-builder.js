@@ -32,7 +32,6 @@ export default class QueryBuilder {
   }
 
   then(...args) {
-    const knex = this.model._parent.knex;
     let originalResult;
 
     return this._knexQb
@@ -42,7 +41,7 @@ export default class QueryBuilder {
 
         for (const relation of this._relations) {
           // TODO: Add support for result sets which return multiple results
-          awaitableQueries.push(relation.applyAsync(knex, res));
+          awaitableQueries.push(relation.applyAsync(res));
         }
 
         return Promise.all(awaitableQueries);
