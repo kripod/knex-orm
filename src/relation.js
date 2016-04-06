@@ -21,55 +21,50 @@ export default class Relation {
     this.target = typeof Target === 'string' ? modelRegistry[Target] : Target;
 
     this.type = type;
-    this.foreignKey = foreignKey || `${underscore(this.origin.name)}_id`;
+  }
+
+  _executeQuery(knex, originInstances, originAttribute, targetAttribute) {
+    const models = originInstances;
+
+    return knex.from(this.target.tableName)
+      .whereIn(
+        originAttribute,
+        models.map((model) => model[targetAttribute])
+      )
+      .then((relatedModels) => {
+        for (const relatedModel of relatedModels) {
+          // Pair up the related Model with its origin
+          const foreignValue = relatedModel[originAttribute];
+          const origin = models.find((model) =>
+            model[targetAttribute] === foreignValue
+          );
+
+          if (origin) {
+            if (!origin[this.name]) origin[this.name] = [];
+            origin[this.name].push(relatedModel);
+          }
+        }
+      });
   }
 
   applyAsync(knex, originInstances) {
-    const models = originInstances;
-
     switch (this.type) {
       case RelationType.ONE_TO_MANY:
       case RelationType.ONE_TO_ONE:
-        return knex.from(this.target.tableName)
-          .whereIn(
-            this.foreignKey,
-            models.map((model) => model[this.origin.idAttribute])
-          )
-          .then((relatedModels) => {
-            for (const relatedModel of relatedModels) {
-              // Pair up the related Model with its origin
-              const foreignValue = relatedModel[this.foreignKey];
-              const origin = models.find((model) =>
-                model[this.origin.idAttribute] === foreignValue
-              );
-
-              if (origin) {
-                if (!origin[this.name]) origin[this.name] = [];
-                origin[this.name].push(relatedModel);
-              }
-            }
-          });
+        return this._executeQuery(
+          knex,
+          originInstances,
+          this.foreignKey || `${underscore(this.origin.name)}_id`,
+          this.origin.idAttribute
+        );
 
       case RelationType.MANY_TO_ONE:
-        return knex.from(this.target.tableName)
-          .whereIn(
-            this.target.idAttribute,
-            models.map((model) => model[this.foreignKey])
-          )
-          .then((relatedModels) => {
-            for (const relatedModel of relatedModels) {
-              // Pair up the related Model with its origin
-              const foreignValue = relatedModel[this.target.idAttribute];
-              const origin = models.find((model) =>
-                model[this.foreignKey] === foreignValue
-              );
-
-              if (origin) {
-                if (!origin[this.name]) origin[this.name] = [];
-                origin[this.name].push(relatedModel);
-              }
-            }
-          });
+        return this._executeQuery(
+          knex,
+          originInstances,
+          this.target.idAttribute,
+          this.foreignKey || `${underscore(this.target.name)}_id`
+        );
 
       default:
         return null;
