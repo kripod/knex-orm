@@ -40,7 +40,6 @@ export default class QueryBuilder {
         originalResult = res;
 
         for (const relation of this._relations) {
-          // TODO: Add support for result sets which return multiple results
           awaitableQueries.push(relation.applyAsync(res));
         }
 

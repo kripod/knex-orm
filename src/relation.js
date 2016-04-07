@@ -1,5 +1,6 @@
 import { underscore } from 'inflection';
 import RelationType from './enums/relation-type';
+import { flattenArray } from './utils';
 
 /**
  * Represents a relation between Models.
@@ -27,6 +28,18 @@ export default class Relation {
   _executeQuery(originAttribute, targetAttribute, ...originInstances) {
     const models = originInstances;
     const knex = this.origin._parent.knex;
+
+    /* TODO: Remove the debug statements below
+    console.log(`
+      knex.from(${this.target.tableName})
+      .whereIn(
+        ${originAttribute},
+        models.map((model) => model[${targetAttribute}])
+      )`
+    );
+    console.log(models);
+    console.log(models.map((model) => model[targetAttribute]));
+    */
 
     return knex.from(this.target.tableName)
       .whereIn(
@@ -56,14 +69,14 @@ export default class Relation {
         return this._executeQuery(
           this.foreignKey || `${underscore(this.origin.name)}_id`,
           this.origin.idAttribute,
-          ...originInstances
+          ...flattenArray(originInstances)
         );
 
       case RelationType.MANY_TO_ONE:
         return this._executeQuery(
           this.target.idAttribute,
           this.foreignKey || `${underscore(this.target.name)}_id`,
-          ...originInstances
+          ...flattenArray(originInstances)
         );
 
       default:
