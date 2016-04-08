@@ -49,8 +49,15 @@ export default class QueryBuilder {
       .then(...args);
   }
 
-  toString() {
-    return this._knexQb.toString();
+  toString(separator = '\n') {
+    // Return a list of query strings to be executed, including Relations
+    const result = [this._knexQb.toString()];
+    for (const relation of this._relations) {
+      // Create the relation query with an empty array of Models
+      result.push(relation.createQuery([]).toString());
+    }
+
+    return result.join(separator);
   }
 }
 

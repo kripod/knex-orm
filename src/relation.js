@@ -4,9 +4,9 @@ import { flattenArray } from './utils';
 
 /**
  * Represents a relation between Models.
- * @property {Model} Origin Static Model object which shall be joined with the
+ * @property {Model} origin Static Model object which shall be joined with the
  * target.
- * @property {Model} Target Static Model object which corresponds to the origin.
+ * @property {Model} target Static Model object which corresponds to the origin.
  * @property {RelationType} type Type of the relation between 'origin' and
  * 'target'.
  * @property {string} foreignKey The attribute which points to the primary key
@@ -22,30 +22,69 @@ export default class Relation {
     this.target = typeof Target === 'string' ? modelRegistry[Target] : Target;
 
     this.type = type;
-    this.foreignKey = foreignKey;
+    this._foreignKey = foreignKey;
   }
 
-  _executeQuery(originAttribute, targetAttribute, ...originInstances) {
-    const models = originInstances;
-    const knex = this.origin._parent.knex;
+  get foreignKey() {
+    if (!this._foreignKey) {
+      // Set the foreign key deterministically
+      switch (this.type) {
+        case RelationType.ONE_TO_MANY:
+        case RelationType.ONE_TO_ONE:
+          this._foreignKey = `${underscore(this.origin.name)}_id`;
+          break;
 
-    /* TODO: Remove the debug statements below
-    console.log(`
-      knex.from(${this.target.tableName})
-      .whereIn(
-        ${originAttribute},
-        models.map((model) => model[${targetAttribute}])
-      )`
-    );
-    console.log(models);
-    console.log(models.map((model) => model[targetAttribute]));
-    */
+        default:
+          this._foreignKey = `${underscore(this.target.name)}_id`;
+          break;
+      }
+    }
+
+    return this._foreignKey;
+  }
+
+  get originAttribute() {
+    switch (this.type) {
+      case RelationType.ONE_TO_MANY:
+      case RelationType.ONE_TO_ONE:
+        return this.foreignKey;
+
+      default:
+        return this.target.idAttribute;
+    }
+  }
+
+  get targetAttribute() {
+    switch (this.type) {
+      case RelationType.ONE_TO_MANY:
+      case RelationType.ONE_TO_ONE:
+        return this.origin.idAttribute;
+
+      default:
+        return this.foreignKey;
+    }
+  }
+
+  createQuery(originInstances) {
+    const knex = this.origin._parent.knex;
+    const targetAttribute = this.targetAttribute;
 
     return knex.from(this.target.tableName)
       .whereIn(
-        originAttribute,
-        models.map((model) => model[targetAttribute])
-      )
+        this.originAttribute,
+        originInstances.length > 0 ? // Pass a mock value if necessary
+          originInstances.map((model) => model[targetAttribute]) :
+          [`originInstance.${targetAttribute}`]
+      );
+  }
+
+  applyAsync(...originInstances) {
+    const models = flattenArray(originInstances);
+    const originAttribute = this.originAttribute;
+    const targetAttribute = this.targetAttribute;
+
+    // Create and then execute the query, handling Model bindings
+    return this.createQuery(models)
       .then((relatedModels) => {
         for (const relatedModel of relatedModels) {
           // Pair up the related Model with its origin
@@ -60,27 +99,5 @@ export default class Relation {
           }
         }
       });
-  }
-
-  applyAsync(...originInstances) {
-    switch (this.type) {
-      case RelationType.ONE_TO_MANY:
-      case RelationType.ONE_TO_ONE:
-        return this._executeQuery(
-          this.foreignKey || `${underscore(this.origin.name)}_id`,
-          this.origin.idAttribute,
-          ...flattenArray(originInstances)
-        );
-
-      case RelationType.MANY_TO_ONE:
-        return this._executeQuery(
-          this.target.idAttribute,
-          this.foreignKey || `${underscore(this.target.name)}_id`,
-          ...flattenArray(originInstances)
-        );
-
-      default:
-        return null;
-    }
   }
 }

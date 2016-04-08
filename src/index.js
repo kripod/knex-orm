@@ -23,7 +23,6 @@ export default class Knexpress {
   // camelCase and snake_case).
   constructor(knex, options) {
     // Initialize private properties
-    Object.defineProperty(this, '_knex', { writable: true });
     Object.defineProperty(this, '_models', { value: {} });
 
     // Store the given Knex client instance

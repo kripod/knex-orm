@@ -37,11 +37,6 @@ export default class Model {
       writable: true,
       value: [],
     });
-
-    // Initialize a store for related Models
-    Object.defineProperty(this, '_related', {
-      value: [],
-    });
   }
 
   static hasOne(Target, foreignKey) {
