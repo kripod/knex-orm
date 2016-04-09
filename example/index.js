@@ -9,20 +9,26 @@ Company.where({ rank: 3 }).orderBy('name').then((res) => {
 */
 
 async function test() {
-  console.log(Company
+  console.log(Company.query()
     .withRelated('employees')
     .orderBy('name')
     .first().toString());
-  console.log(Employee.where({ id: 3 }).withRelated('company').toString());
+  console.log(Employee.query()
+    .where({ id: 3 })
+    .withRelated('company')
+    .toString()
+  );
 
-  const companies = await Company
+  const companies = await Company.query()
     .withRelated('employees')
     .orderBy('name')
     .first();
   console.log('Companies:');
   console.log(companies);
 
-  const employee = await Employee.where({ id: 3 }).withRelated('company');
+  const employee = await Employee.query()
+    .where({ id: 3 })
+    .withRelated('company');
   console.log('Employee:');
   console.log(employee);
 }

@@ -19,7 +19,7 @@ test('static model property defaults', (t) => {
 });
 
 test('static model methods', (t) => {
-  t.equal(Company.where({ id: 3 }).toString(),
+  t.equal(Company.query().where({ id: 3 }).toString(),
     'select * from "companies" where "id" = 3'
   );
 

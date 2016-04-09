@@ -1,4 +1,3 @@
-import QueryBuilder from './query-builder';
 import { DbObjectAlreadyRegisteredError } from './errors';
 import { requireUncached } from './utils';
 
@@ -41,18 +40,6 @@ export default class Knexpress {
       // Clone the original class
       this._model = requireUncached('./model');
       this._model._parent = this;
-
-      const qbMethodNames = Object.getOwnPropertyNames(QueryBuilder.prototype)
-        .filter((methodName) => methodName !== 'constructor');
-
-      // Inherit QueryBuilder's instance methods as static Model methods
-      for (const methodName of qbMethodNames) {
-        this._model[methodName] = function queryMethod(...args) {
-          // In the current context, 'this' refers to a static Model object
-          const qb = new QueryBuilder(this);
-          return qb[methodName](...args);
-        };
-      }
     }
 
     return this._model;

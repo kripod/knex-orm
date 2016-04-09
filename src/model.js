@@ -1,4 +1,5 @@
 import { underscore, pluralize } from 'inflection';
+import QueryBuilder from './query-builder';
 import Relation from './relation';
 import RelationType from './enums/relation-type';
 import { EmptyDbObjectError, InexistentDbObjectError } from './errors';
@@ -12,9 +13,7 @@ export default class Model {
    * Case-sensitive name of the database table which corresponds to the Model.
    * @type {string}
    */
-  static get tableName() {
-    return pluralize(underscore(this.name));
-  }
+  static get tableName() { return pluralize(underscore(this.name)); }
 
   /**
    * ID attribute, which is used as the primary key of the Model.
@@ -37,6 +36,14 @@ export default class Model {
       writable: true,
       value: [],
     });
+  }
+
+  /**
+   * Returns a new QueryBuilder instance which corresponds to the current Model.
+   * @returns {QueryBuilder}
+   */
+  static query() {
+    return new QueryBuilder(this);
   }
 
   static hasOne(Target, foreignKey) {
@@ -108,8 +115,7 @@ export default class Model {
 
     // Check whether the current instance needs to be given an ID
     if (!knexObject) {
-      const knex = this.constructor._parent.knex;
-      return knex.from(this.constructor.tableName).insert(updatableProps);
+      return this.constructor.query().insert(updatableProps);
     }
 
     return knexObject.update(updatableProps);
@@ -119,8 +125,7 @@ export default class Model {
     const idAttribute = this.constructor.idAttribute;
     if (typeof this[idAttribute] === 'undefined') return null;
 
-    const knex = this.constructor._parent.knex;
-    return knex.from(this.constructor.tableName)
+    return this.constructor.query()
       .where({ [idAttribute]: this[idAttribute] });
   }
 }

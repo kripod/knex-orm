@@ -66,12 +66,12 @@ export default class Relation {
   }
 
   createQuery(originInstances) {
-    const knex = this.origin._parent.knex;
+    const originAttribute = this.originAttribute;
     const targetAttribute = this.targetAttribute;
 
-    return knex.from(this.target.tableName)
+    return this.target.query()
       .whereIn(
-        this.originAttribute,
+        originAttribute,
         originInstances.length > 0 ? // Pass a mock value if necessary
           originInstances.map((model) => model[targetAttribute]) :
           [`originInstance.${targetAttribute}`]
