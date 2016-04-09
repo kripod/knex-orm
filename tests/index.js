@@ -4,11 +4,13 @@ import Company from './../example/models/company';
 import Employee from './../example/models/employee';
 
 const NEW_EMPLOYEE_PROPS = {
+  company_id: 2,
   name: 'Olympia Pearson',
   birth_date: new Date('1982-08-20 00:00'),
 };
 
 const newEmployee = new Employee(NEW_EMPLOYEE_PROPS);
+const oldEmployee = new Employee({ id: 5, name: 'Alexa Buckner' }, false);
 
 // console.log(Company.where({ id: 3 }).orderBy('id').withRelated().toString());
 
@@ -33,8 +35,8 @@ test('creating new models', (t) => {
   }
 
   t.equals(newEmployee.save().toString(),
-    'insert into "employees" ("birth_date", "name") ' +
-    'values (\'1982-08-20 00:00:00.000\', \'Olympia Pearson\')'
+    'insert into "employees" ("birth_date", "company_id", "name") ' +
+    'values (\'1982-08-20 00:00:00.000\', 2, \'Olympia Pearson\')'
   );
 
   t.end();
@@ -50,30 +52,32 @@ test('modifying existing models', (t) => {
   );
 
   // Test modifying an existing employee
-  const employee = new Employee({
-    id: 5,
-    zip_code: 4674,
-  });
-
-  t.equals(employee.save().toString(),
+  oldEmployee.zip_code = 4674;
+  t.equals(oldEmployee.save().toString(),
     'update "employees" set "zip_code" = 4674 where "id" = 5'
   );
 
   // Cover the avoidance of unnecessary queries
-  t.throws(() => newEmployee.save(), 'should throw EmptyDbObjectError');
-  t.equals(employee.save().toString(),
+  t.equals(oldEmployee.save().toString(),
     'select * from "employees" where "id" = 5'
   );
-
+  t.throws(() => newEmployee.save(), 'should throw EmptyDbObjectError');
   t.end();
 });
 
 test('deleting existing models', (t) => {
   t.throws(() => newEmployee.del(), 'should throw InexistentDbObjectError');
 
-  const employee = new Employee({ id: 1 });
-  t.equals(employee.del().toString(),
-    'delete from "employees" where "id" = 1'
+  t.equals(oldEmployee.del().toString(),
+    'delete from "employees" where "id" = 5'
+  );
+
+  t.end();
+});
+
+test('relations', (t) => {
+  t.equals(oldEmployee.fetchRelated('company').toString('\t').split('\t')[1],
+    'select * from "companies" where "rank" in (\'originInstance.company_id\')'
   );
 
   t.end();

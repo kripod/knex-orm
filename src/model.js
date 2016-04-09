@@ -23,9 +23,11 @@ export default class Model {
 
   /**
    * Creates a new Model instance.
-   * @param {Object} props Initial properties of the instance.
+   * @param {Object} [props={}] Initial properties of the instance.
+   * @param {boolean} [isNew=true] Determines whether the "props" of the
+   * instance are considered new.
    */
-  constructor(props = {}) {
+  constructor(props = {}, isNew = true) {
     // Set the initial properties of the instance
     for (const key of Object.keys(props)) {
       this[key] = props[key];
@@ -34,7 +36,7 @@ export default class Model {
     // Initialize a store for old properties of the instance
     Object.defineProperty(this, '_oldProps', {
       writable: true,
-      value: [],
+      value: isNew ? {} : Object.assign({}, props),
     });
   }
 
@@ -59,18 +61,27 @@ export default class Model {
   }
 
   /**
+   * Fetches the given related Models of the current instance.
+   * @param {...string} props Relation attributes to be fetched.
+   * @returns {QueryBuilder}
+   */
+  fetchRelated(...props) {
+    const qb = this._getQueryBuilder();
+    if (!qb) throw new InexistentDbObjectError();
+
+    return qb.withRelated(...props);
+  }
+
+  /**
    * Queues the deletion of the current Model from the database.
    * @throws {InexistentDbObjectError}
-   * @returns {Object} A Knex query object.
+   * @returns {QueryBuilder}
    */
   del() {
-    const knexObject = this._getKnexObject();
+    const qb = this._getQueryBuilder();
+    if (!qb) throw new InexistentDbObjectError();
 
-    if (!knexObject) {
-      throw new InexistentDbObjectError();
-    }
-
-    return knexObject.del();
+    return qb.del();
   }
 
   /**
@@ -79,10 +90,10 @@ export default class Model {
    * queues an update query based on it. Otherwise, a new Model gets inserted
    * into the database.
    * @throws {EmptyDbObjectError}
-   * @returns {Object} A Knex query object.
+   * @returns {QueryBuilder}
    */
   save() {
-    const knexObject = this._getKnexObject();
+    const qb = this._getQueryBuilder();
     const ignorableProps = [this.constructor.idAttribute];
     const updatableProps = {};
 
@@ -101,11 +112,11 @@ export default class Model {
 
     // Don't run unnecessary queries
     if (Object.keys(updatableProps).length === 0) {
-      if (!knexObject) {
+      if (!qb) {
         throw new EmptyDbObjectError();
       }
 
-      return knexObject;
+      return qb;
     }
 
     // Update the Model's old properties with the new ones
@@ -114,14 +125,18 @@ export default class Model {
     }
 
     // Check whether the current instance needs to be given an ID
-    if (!knexObject) {
+    if (!qb) {
       return this.constructor.query().insert(updatableProps);
     }
 
-    return knexObject.update(updatableProps);
+    return qb.update(updatableProps);
   }
 
-  _getKnexObject() {
+  /**
+   * @returns {?QueryBuilder}
+   * @private
+   */
+  _getQueryBuilder() {
     const idAttribute = this.constructor.idAttribute;
     if (typeof this[idAttribute] === 'undefined') return null;
 

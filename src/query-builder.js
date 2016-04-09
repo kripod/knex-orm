@@ -41,9 +41,9 @@ export default class QueryBuilder {
 
         // Convert the result to a specific Model type if necessary
         if (Array.isArray(res)) {
-          result = res.map((obj) => new this.Model(obj));
+          result = res.map((obj) => new this.Model(obj, false));
         } else if (res instanceof Object) {
-          result = new this.Model(res);
+          result = new this.Model(res, false);
         }
 
         // Apply each desired relation to the original result
