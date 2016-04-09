@@ -3,7 +3,7 @@ import { flattenArray } from './utils';
 
 export default class QueryBuilder {
   constructor(Model) {
-    this.model = Model;
+    this.Model = Model;
 
     Object.defineProperty(this, '_knexQb', {
       writable: true,
@@ -15,7 +15,7 @@ export default class QueryBuilder {
 
   withRelated(...props) {
     const relationNames = flattenArray(props);
-    const relationEntries = Object.entries(this.model.related);
+    const relationEntries = Object.entries(this.Model.related);
 
     // Filter the given relations by name if necessary
     if (relationNames.length > 0) {
@@ -32,20 +32,28 @@ export default class QueryBuilder {
   }
 
   then(...args) {
-    let originalResult;
+    let result;
 
     return this._knexQb
       .then((res) => {
         const awaitableQueries = [];
-        originalResult = res;
+        result = res;
 
+        // Convert the result to a specific Model type if necessary
+        if (Array.isArray(res)) {
+          result = res.map((obj) => new this.Model(obj));
+        } else if (res instanceof Object) {
+          result = new this.Model(res);
+        }
+
+        // Apply each desired relation to the original result
         for (const relation of this._relations) {
-          awaitableQueries.push(relation.applyAsync(res));
+          awaitableQueries.push(relation.applyAsync(result));
         }
 
         return Promise.all(awaitableQueries);
       })
-      .then(() => originalResult)
+      .then(() => result)
       .then(...args);
   }
 
