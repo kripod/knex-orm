@@ -1,5 +1,6 @@
 import { underscore } from 'inflection';
 import RelationType from './enums/relation-type';
+import { RelationError } from './errors';
 import { flattenArray } from './utils';
 
 /**
@@ -94,8 +95,25 @@ export default class Relation {
           );
 
           if (origin) {
-            if (!origin[this.name]) origin[this.name] = [];
-            origin[this.name].push(relatedModel);
+            const isRelationAnyToOne =
+              this.type === RelationType.ONE_TO_ONE ||
+              this.type === RelationType.MANY_TO_ONE;
+
+            if (typeof origin[this.name] === 'undefined') {
+              // Initially set the origin's related property
+              if (isRelationAnyToOne) {
+                origin[this.name] = relatedModel;
+              } else {
+                origin[this.name] = [relatedModel];
+              }
+            } else {
+              // Modify the origin's related property if possible
+              if (isRelationAnyToOne) {
+                throw new RelationError();
+              } else {
+                origin[this.name].push(relatedModel);
+              }
+            }
           }
         }
       });

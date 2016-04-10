@@ -14,6 +14,14 @@ const oldEmployee = new Employee({ id: 5, name: 'Alexa Buckner' }, false);
 
 // console.log(Company.where({ id: 3 }).orderBy('id').withRelated().toString());
 
+test('orm instance methods', (t) => {
+  t.throws(() => Database.register(null, 'Company'),
+    'should throw DbObjectAlreadyRegisteredError'
+  );
+
+  t.end();
+});
+
 test('static model property defaults', (t) => {
   t.equal(Company.tableName, 'companies');
 

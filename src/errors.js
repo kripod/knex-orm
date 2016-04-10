@@ -44,3 +44,13 @@ export class InexistentDbObjectError extends ExtendableError {
     super('Database object does not exist');
   }
 }
+
+/**
+ * An error which gets thrown when a Relation does not behave as expected.
+ * @extends Error
+ */
+export class RelationError extends ExtendableError {
+  constructor() {
+    super('One-to-one and many-to-one Relations cannot be re-assigned');
+  }
+}
