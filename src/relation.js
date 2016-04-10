@@ -29,41 +29,24 @@ export default class Relation {
   get foreignKey() {
     if (!this._foreignKey) {
       // Set the foreign key deterministically
-      switch (this.type) {
-        case RelationType.ONE_TO_MANY:
-        case RelationType.ONE_TO_ONE:
-          this._foreignKey = `${underscore(this.origin.name)}_id`;
-          break;
-
-        default:
-          this._foreignKey = `${underscore(this.target.name)}_id`;
-          break;
-      }
+      this._foreignKey = this.type === RelationType.MANY_TO_ONE ?
+        `${underscore(this.target.name)}_id` :
+        `${underscore(this.origin.name)}_id`;
     }
 
     return this._foreignKey;
   }
 
   get originAttribute() {
-    switch (this.type) {
-      case RelationType.ONE_TO_MANY:
-      case RelationType.ONE_TO_ONE:
-        return this.foreignKey;
-
-      default:
-        return this.target.idAttribute;
-    }
+    return this.type === RelationType.MANY_TO_ONE ?
+      this.target.idAttribute :
+      this.foreignKey;
   }
 
   get targetAttribute() {
-    switch (this.type) {
-      case RelationType.ONE_TO_MANY:
-      case RelationType.ONE_TO_ONE:
-        return this.origin.idAttribute;
-
-      default:
-        return this.foreignKey;
-    }
+    return this.type === RelationType.MANY_TO_ONE ?
+      this.foreignKey :
+      this.origin.idAttribute;
   }
 
   createQuery(originInstances) {
@@ -95,23 +78,19 @@ export default class Relation {
           );
 
           if (origin) {
-            const isRelationAnyToOne =
-              this.type === RelationType.ONE_TO_ONE ||
-              this.type === RelationType.MANY_TO_ONE;
-
             if (typeof origin[this.name] === 'undefined') {
               // Initially set the origin's related property
-              if (isRelationAnyToOne) {
-                origin[this.name] = relatedModel;
-              } else {
+              if (this.type === RelationType.ONE_TO_MANY) {
                 origin[this.name] = [relatedModel];
+              } else {
+                origin[this.name] = relatedModel;
               }
             } else {
               // Modify the origin's related property if possible
-              if (isRelationAnyToOne) {
-                throw new RelationError();
-              } else {
+              if (this.type === RelationType.ONE_TO_MANY) {
                 origin[this.name].push(relatedModel);
+              } else {
+                throw new RelationError();
               }
             }
           }
