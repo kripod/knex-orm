@@ -1,4 +1,4 @@
-import { underscore } from 'inflection';
+import { camelize, underscore } from 'inflection';
 import RelationType from './enums/relation-type';
 import { RelationError } from './errors';
 import { flattenArray } from './utils';
@@ -32,21 +32,33 @@ export default class Relation {
       this._foreignKey = this.type === RelationType.MANY_TO_ONE ?
         `${underscore(this.target.name)}_id` :
         `${underscore(this.origin.name)}_id`;
+
+      if (this.origin._parent.options.convertCase) {
+        this._foreignKey = camelize(this._foreignKey, true);
+      }
     }
 
     return this._foreignKey;
   }
 
   get originAttribute() {
-    return this.type === RelationType.MANY_TO_ONE ?
+    const result = this.type === RelationType.MANY_TO_ONE ?
       this.target.idAttribute :
       this.foreignKey;
+
+    return this.origin._parent.options.convertCase ?
+      camelize(result, true) :
+      result;
   }
 
   get targetAttribute() {
-    return this.type === RelationType.MANY_TO_ONE ?
+    const result = this.type === RelationType.MANY_TO_ONE ?
       this.foreignKey :
       this.origin.idAttribute;
+
+    return this.origin._parent.options.convertCase ?
+      camelize(result, true) :
+      result;
   }
 
   createQuery(originInstances) {
