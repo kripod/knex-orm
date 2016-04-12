@@ -1,8 +1,9 @@
+import { underscore } from 'inflection';
 import { DbObjectAlreadyRegisteredError } from './errors';
 import { requireUncached } from './utils';
 
 const DEFAULT_OPTIONS = {
-  convertCase: true,
+  convertCase: false,
 };
 
 /**
@@ -15,20 +16,29 @@ export default class Knexpress {
    * @param {Object} knex Knex client instance to which database functions shall
    * be bound.
    * @param {Object} [options] Additional options regarding ORM.
+   * @param {boolean} [options.convertCase=false] If set to true, then the ORM
+   * will handle letter case conversion for strings automatically (between
+   * camelCase and snake_case).
    */
-  // TODO:
-  // @param {boolean} [options.convertCase=true] If set to true, then the ORM
-  // will handle letter case convertion for strings automatically (between
-  // camelCase and snake_case).
   constructor(knex, options) {
     // Initialize private properties
     Object.defineProperty(this, '_models', { value: {} });
 
-    // Store the given Knex client instance
-    this.knex = knex;
+    // Store the given Knex client instance and then make it overridable
+    this.knex = Object.assign({}, knex);
 
     // Parse and store options
     this.options = Object.assign(DEFAULT_OPTIONS, options);
+    if (this.options.convertCase) {
+      const formatterPrototype = this.knex.client.Formatter.prototype;
+
+      // Override a Knex query formatter function by extending it
+      ((originalFunction) => {
+        formatterPrototype._wrapString = function _wrapString(value) {
+          return underscore(originalFunction.call(this, value));
+        };
+      })(formatterPrototype._wrapString);
+    }
   }
 
   /**

@@ -12,6 +12,7 @@ async function test() {
   console.log(Company.query()
     .withRelated('employees')
     .orderBy('name')
+    .where('companyId', 1)
     .first().toString());
   console.log(Employee.query()
     .where({ id: 3 })

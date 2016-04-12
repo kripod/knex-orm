@@ -1,4 +1,4 @@
-import { underscore, pluralize } from 'inflection';
+import { tableize } from 'inflection';
 import QueryBuilder from './query-builder';
 import Relation from './relation';
 import RelationType from './enums/relation-type';
@@ -13,7 +13,7 @@ export default class Model {
    * Case-sensitive name of the database table which corresponds to the Model.
    * @type {string}
    */
-  static get tableName() { return pluralize(underscore(this.name)); }
+  static get tableName() { return tableize(this.name); }
 
   /**
    * ID attribute, which is used as the primary key of the Model.

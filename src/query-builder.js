@@ -1,5 +1,5 @@
 import Config from './config';
-import { flattenArray } from './utils';
+import { camelizeKeys, flattenArray, modelize } from './utils';
 
 export default class QueryBuilder {
   constructor(Model) {
@@ -39,12 +39,13 @@ export default class QueryBuilder {
         const awaitableQueries = [];
         result = res;
 
-        // Convert the result to a specific Model type if necessary
-        if (Array.isArray(res)) {
-          result = res.map((obj) => new this.Model(obj, false));
-        } else if (res instanceof Object) {
-          result = new this.Model(res, false);
+        // Apply letter case conversion if needed
+        if (this.Model._parent.options.convertCase) {
+          result = camelizeKeys(result);
         }
+
+        // Convert the result to a specific Model type if necessary
+        result = modelize(result, this.Model);
 
         // Apply each desired relation to the original result
         for (const relation of this._relations) {
