@@ -22,4 +22,4 @@ notifications:
     - https://webhooks.gitter.im/e/ce58f2688d67dbcd287f
 addons:
   code_climate:
-    repo_token: 67d8708e128fef6d512ddbf1b2d0306c6f060e2f60e6812fda6b9f1b17145ffc
+    repo_token: c8f4391d78c1672b4c3181dd1a7932f6beb72f9a41171d1126b00d831e1dba5f
