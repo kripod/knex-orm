@@ -1,19 +1,19 @@
-# knexpress
+# knex-orm
 
 Knex-based object-relational mapping for JavaScript.
 
-[![Version (npm)](https://img.shields.io/npm/v/knexpress.svg)](https://npmjs.com/package/knexpress)
-[![Build Status](https://img.shields.io/travis/kripod/knexpress/master.svg)](https://travis-ci.org/kripod/knexpress)
-[![Code Coverage](https://img.shields.io/codeclimate/coverage/github/kripod/knexpress.svg)](https://codeclimate.com/github/kripod/knexpress/coverage)
-[![Code Climate](https://img.shields.io/codeclimate/github/kripod/knexpress.svg)](https://codeclimate.com/github/kripod/knexpress)
-[![Gitter](https://img.shields.io/gitter/room/kripod/knexpress.svg)](https://gitter.im/kripod/knexpress)
+[![Version (npm)](https://img.shields.io/npm/v/knex-orm.svg)](https://npmjs.com/package/knex-orm)
+[![Build Status](https://img.shields.io/travis/kripod/knex-orm/master.svg)](https://travis-ci.org/kripod/knex-orm)
+[![Code Coverage](https://img.shields.io/codeclimate/coverage/github/kripod/knex-orm.svg)](https://codeclimate.com/github/kripod/knex-orm/coverage)
+[![Code Climate](https://img.shields.io/codeclimate/github/kripod/knex-orm.svg)](https://codeclimate.com/github/kripod/knex-orm)
+[![Gitter](https://img.shields.io/gitter/room/kripod/knex-orm.svg)](https://gitter.im/kripod/knex-orm)
 
 ## Introduction
 
 The motivation behind this project is to combine the simplicity of [Bookshelf][]
 with the power of [Knex][] and modern ECMAScript features.
 
-Knexpress aims to provide a wrapper for every significant method of [Knex][],
+Knex-ORM aims to provide a wrapper for every significant method of [Knex][],
 while keeping the ORM code overhead as low as possible.
 
 [bookshelf]: http://bookshelfjs.org
@@ -27,7 +27,7 @@ dependencies is mandatory.
 
 ```bash
 $ npm install knex --save
-$ npm install knexpress --save
+$ npm install knex-orm --save
 
 # Then add at least one of the following:
 $ npm install pg --save
@@ -36,14 +36,14 @@ $ npm install mariasql --save
 $ npm install sqlite3 --save
 ```
 
-An instance of the Knexpress library can be created by passing a [Knex][] client
+An instance of the Knex-ORM library can be created by passing a [Knex][] client
 instance to the entry class.
 
 ```js
 const knex = require('knex');
-const Knexpress = require('knexpress');
+const KnexOrm = require('knex-orm');
 
-const Database = new Knexpress(
+const Database = new KnexOrm(
   knex({
     client: 'sqlite3',
     connection: {
@@ -113,7 +113,6 @@ Company.where({ email: 'info@famouscompany.example' })
 
 ## Upcoming features
 
--   Associations based on Model relationships
 -   Custom defaults for automatic SQL attribute formatting
 -   Optional Model property validation
 
@@ -121,9 +120,67 @@ Company.where({ email: 'info@famouscompany.example' })
 
 ## API Reference
 
-### Knexpress
+### Model
 
-Entry class for accessing the functionality of Knexpress.
+Base Model class which shall be extended by the attributes of a database
+object.
+
+#### constructor
+
+Creates a new Model instance.
+
+**Parameters**
+
+-   `props` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)=** Initial properties of the instance. (optional, default `{}`)
+-   `isNew` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)=** Determines whether the "props" of the
+    instance are considered new. (optional, default `true`)
+
+#### del
+
+Queues the deletion of the current Model from the database.
+
+-   Throws **InexistentDbObjectError** 
+
+Returns **QueryBuilder** 
+
+#### fetchRelated
+
+Fetches the given related Models of the current instance.
+
+**Parameters**
+
+-   `props` **...[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Relation attributes to be fetched.
+
+Returns **QueryBuilder** 
+
+#### save
+
+Queues saving (creating or updating) the current Model in the database.
+If the 'idAttribute' of the current instance is set, then this method
+queues an update query based on it. Otherwise, a new Model gets inserted
+into the database.
+
+-   Throws **EmptyDbObjectError** 
+
+Returns **QueryBuilder** 
+
+#### idAttribute
+
+ID attribute, which is used as the primary key of the Model.
+
+#### query
+
+Returns a new QueryBuilder instance which corresponds to the current Model.
+
+Returns **QueryBuilder** 
+
+#### tableName
+
+Case-sensitive name of the database table which corresponds to the Model.
+
+### KnexOrm
+
+Entry class for accessing the functionality of Knex-ORM.
 
 **Properties**
 
@@ -131,13 +188,16 @@ Entry class for accessing the functionality of Knexpress.
 
 #### constructor
 
-Creates a new Knexpress ORM instance.
+Creates a new Knex-ORM instance.
 
 **Parameters**
 
 -   `knex` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Knex client instance to which database functions shall
     be bound.
 -   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)=** Additional options regarding ORM.
+    -   `options.convertCase` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)=** If set to true, then the ORM
+        will handle letter case conversion for properties automatically (between
+        camelCase and snake_case). (optional, default `false`)
 
 #### Model
 
@@ -152,39 +212,10 @@ Registers a static Model object to the list of database objects.
 -   `model` **Model** Model to be registered.
 -   `name` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)=** Name under which the Model shall be registered.
 
+
+-   Throws **DbObjectAlreadyRegisteredError** 
+
 Returns **Model** The Model which was registered.
-
-### Model
-
-Base Model class which shall be extended by the attributes of a database
-object.
-
-#### constructor
-
-Creates a new Model instance.
-
-**Parameters**
-
--   `props` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Initial properties of the instance.
-
-#### del
-
-Queues the deletion of the current Model from the database.
-
-#### save
-
-Queues saving (creating or updating) the current Model in the database.
-If the 'idAttribute' of the current instance is set, then this method
-queues an update query based on it. Otherwise, a new Model gets inserted
-into the database.
-
-#### idAttribute
-
-ID attribute, which is used as the primary key of the Model.
-
-#### tableName
-
-Case-sensitive name of the database table which corresponds to the Model.
 
 ### DbObjectAlreadyRegisteredError
 
@@ -210,3 +241,9 @@ object.
 
 An error which gets thrown when an attempt is made to modify an inexistent
 database object.
+
+### RelationError
+
+**Extends Error**
+
+An error which gets thrown when a Relation does not behave as expected.

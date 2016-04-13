@@ -1,4 +1,5 @@
 import { underscore } from 'inflection';
+import Model from './model';
 import { DbObjectAlreadyRegisteredError } from './errors';
 import { requireUncached } from './utils';
 
@@ -7,17 +8,17 @@ const DEFAULT_OPTIONS = {
 };
 
 /**
- * Entry class for accessing the functionality of Knexpress.
+ * Entry class for accessing the functionality of Knex-ORM.
  * @property {Object} knex Knex client corresponding to the ORM instance.
  */
-export default class Knexpress {
+export default class KnexOrm {
   /**
-   * Creates a new Knexpress ORM instance.
+   * Creates a new Knex-ORM instance.
    * @param {Object} knex Knex client instance to which database functions shall
    * be bound.
    * @param {Object} [options] Additional options regarding ORM.
    * @param {boolean} [options.convertCase=false] If set to true, then the ORM
-   * will handle letter case conversion for strings automatically (between
+   * will handle letter case conversion for properties automatically (between
    * camelCase and snake_case).
    */
   constructor(knex, options) {

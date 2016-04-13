@@ -85,7 +85,7 @@ test('deleting existing models', (t) => {
 
 test('relations', (t) => {
   t.equals(oldEmployee.fetchRelated('company').toString('\t').split('\t')[1],
-    'select * from "companies" where "rank" in (\'originInstance.company_id\')'
+    'select * from "companies" where "rank" in (\'originInstance.companyId\')'
   );
 
   t.end();

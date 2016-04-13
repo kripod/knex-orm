@@ -1,8 +1,8 @@
 import knex from 'knex';
-import Knexpress from './../src';
+import KnexOrm from './../src';
 import knexConfig from './../knexfile';
 
-export default new Knexpress(
+export default new KnexOrm(
   knex(knexConfig.development),
   { convertCase: true }
 );
