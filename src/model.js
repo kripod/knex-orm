@@ -48,14 +48,35 @@ export default class Model {
     return new QueryBuilder(this);
   }
 
+  /**
+   * Creates a one-to-one relation between the current Model and a target.
+   * @param {string|Model} Target Name or static reference to the joinable
+   * table's Model.
+   * @param {string} [foreignKey] Foreign key in the target Model.
+   * @returns {Relation}
+   */
   static hasOne(Target, foreignKey) {
     return new Relation(this, Target, RelationType.ONE_TO_ONE, foreignKey);
   }
 
+  /**
+   * Creates a one-to-many relation between the current Model and a target.
+   * @param {string|Model} Target Name or static reference to the joinable
+   * table's Model.
+   * @param {string} [foreignKey] Foreign key in the target Model.
+   * @returns {Relation}
+   */
   static hasMany(Target, foreignKey) {
     return new Relation(this, Target, RelationType.ONE_TO_MANY, foreignKey);
   }
 
+  /**
+   * Creates a many-to-one relation between the current Model and a target.
+   * @param {string|Model} Target Name or static reference to the joinable
+   * table's Model.
+   * @param {string} [foreignKey] Foreign key in this Model.
+   * @returns {Relation}
+   */
   static belongsTo(Target, foreignKey) {
     return new Relation(this, Target, RelationType.MANY_TO_ONE, foreignKey);
   }

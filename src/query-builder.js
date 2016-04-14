@@ -1,6 +1,10 @@
 import Config from './config';
 import { camelizeKeys, flattenArray, modelize } from './utils';
 
+/**
+ * Represents a query builder which corresponds to a static Model reference.
+ * Inherits every query method of the Knex query builder.
+ */
 export default class QueryBuilder {
   constructor(Model) {
     this.Model = Model;
@@ -13,6 +17,11 @@ export default class QueryBuilder {
     Object.defineProperty(this, '_relations', { value: new Set() });
   }
 
+  /**
+   * Fetches the given related Models of the queryable instance(s).
+   * @param {...string} props Relation attributes to be fetched.
+   * @returns {QueryBuilder}
+   */
   withRelated(...props) {
     const relationNames = flattenArray(props);
     const relationEntries = Object.entries(this.Model.related);
@@ -31,6 +40,11 @@ export default class QueryBuilder {
     return this;
   }
 
+  /**
+   * Executes the query as a Promise.
+   * @param {...Object} args Arguments to be passed to Promise.then().
+   * @returns {Promise}
+   */
   then(...args) {
     let result;
 
@@ -58,6 +72,12 @@ export default class QueryBuilder {
       .then(...args);
   }
 
+  /**
+   * Gets the list of raw queries to be executed, joined by a string separator.
+   * @param {string} [separator=\n] Separator string to be used for joining
+   * multiple raw query strings.
+   * @returns {string}
+   */
   toString(separator = '\n') {
     // Return a list of query strings to be executed, including Relations
     const result = [this._knexQb.toString()];

@@ -1,6 +1,6 @@
 {
   "name": "knex-orm",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Knex-based object-relational mapping for JavaScript.",
   "author": "Kristóf Poduszló <kripod@protonmail.com>",
   "license": "MIT",

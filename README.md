@@ -166,6 +166,42 @@ into the database.
 
 Returns **QueryBuilder** 
 
+#### belongsTo
+
+Creates a many-to-one relation between the current Model and a target.
+
+**Parameters**
+
+-   `Target` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)|Model)** Name or static reference to the joinable
+    table's Model.
+-   `foreignKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)=** Foreign key in this Model.
+
+Returns **Relation** 
+
+#### hasMany
+
+Creates a one-to-many relation between the current Model and a target.
+
+**Parameters**
+
+-   `Target` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)|Model)** Name or static reference to the joinable
+    table's Model.
+-   `foreignKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)=** Foreign key in the target Model.
+
+Returns **Relation** 
+
+#### hasOne
+
+Creates a one-to-one relation between the current Model and a target.
+
+**Parameters**
+
+-   `Target` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)|Model)** Name or static reference to the joinable
+    table's Model.
+-   `foreignKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)=** Foreign key in the target Model.
+
+Returns **Relation** 
+
 #### idAttribute
 
 ID attribute, which is used as the primary key of the Model.
@@ -243,6 +279,42 @@ object.
 
 An error which gets thrown when an attempt is made to modify an inexistent
 database object.
+
+### QueryBuilder
+
+Represents a query builder which corresponds to a static Model reference.
+Inherits every query method of the Knex query builder.
+
+#### then
+
+Executes the query as a Promise.
+
+**Parameters**
+
+-   `args` **...[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Arguments to be passed to Promise.then().
+
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
+
+#### toString
+
+Gets the list of raw queries to be executed, joined by a string separator.
+
+**Parameters**
+
+-   `separator` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)=** Separator string to be used for joining
+    multiple raw query strings. (optional, default `\n`)
+
+Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+
+#### withRelated
+
+Fetches the given related Models of the queryable instance(s).
+
+**Parameters**
+
+-   `props` **...[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Relation attributes to be fetched.
+
+Returns **QueryBuilder** 
 
 ### RelationError
 

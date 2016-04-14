@@ -24,6 +24,7 @@ export function modelize(obj, Model) {
     return obj.map((item) => modelize(item, Model));
   }
 
+  // Don't modelize non-objects
   return obj instanceof Object ? new Model(obj, false) : obj;
 }
 
