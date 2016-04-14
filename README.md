@@ -52,28 +52,34 @@ const Database = new KnexOrm(
   })
 );
 
-/**
- * Represents a company for which employees can work.
- * @extends Database.Model
- * @property {number} rank Rank of the company, which serves as a primary key.
- * @property {string} name Name of the company.
- * @property {?string} email E-mail address of the company, which shall be
- * unique, but optional.
- */
+class Employee extends Database.Model {
+  static get tableName() { return 'employees'; } // Redundant
+
+  // Specify related Models which can optionally be fetched
+  static get related() {
+    return {
+      company: this.belongsTo('Company'), // No Model cross-referencing
+    };
+  }
+}
+
 class Company extends Database.Model {
   // The 'tableName' property is omitted on purpose, as it gets assigned
-  // automatically based on the class name.
-  // In this particular case, 'tableName' is set to 'companies'.
+  // automatically based on the Model's class name.
 
   static get idAttribute() { return 'rank'; }
+
+  static get related() {
+    return {
+      employees: this.hasMany('Employee'),
+    };
+  }
 }
+
+// Register Models to make them relatable without cross-referencing each other
+Database.register(Employee);
+Database.register(Company);
 ```
-
-Every significant [Knex][] query method is inherited as a static Model function.
-(For example: `Company.where({ rank: 2 })`, `Company.first()`)
-
-Instances of Models have specific methods discussed in the
-[API Reference](#api-reference).
 
 ## Examples
 
@@ -96,25 +102,21 @@ famousCompany.save()
 Modifying an existing Model gathered by a query:
 
 ```js
-Company.where({ email: 'info@famouscompany.example' })
-  .then((rows) => {
-    // An ordinary response of a Knex 'where' query
+Company.query().where({ email: 'info@famouscompany.example' }).first()
+  .then((company) => {
+    // Response of a Knex 'where' query, with results parsed as Models
     // (See http://knexjs.org/#Builder-where)
-    console.log(rows); // Shall only contain the newly-added company
+    console.log(company); // Should be equal with 'famousCompany' (see above)
 
-    const company = new Company(rows[0]); // Equals to 'famousCompany'
     company.name = 'The Most Famous Company Ever';
     return company.save();
   })
   .then((rowsCount) => {
-    console.log(rowsCount); // 1
+    // An ordinary response of a Knex 'update' query
+    // (See http://knexjs.org/#Builder-update)
+    console.log(rowsCount); // Should be 1
   });
 ```
-
-## Upcoming features
-
--   Custom defaults for automatic SQL attribute formatting
--   Optional Model property validation
 
 <a name="api-reference"></a>
 
