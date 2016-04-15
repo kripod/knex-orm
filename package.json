@@ -1,6 +1,6 @@
 {
   "name": "knex-orm",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Knex-based object-relational mapping for JavaScript.",
   "author": "Kristóf Poduszló <kripod@protonmail.com>",
   "license": "MIT",
@@ -21,7 +21,7 @@
     "watch": "npm run build -- -w",
     "init-db": "rimraf ./dev.sqlite3 && knex migrate:latest && knex seed:run",
     "docs": "documentation readme ./src/index.js -s \"API Reference\"",
-    "test": "npm run build && node -r ./lib -e \"\" && babel-node ./node_modules/isparta/bin/isparta cover ./tests"
+    "test": "npm run build && node ./tests/vanilla-node && babel-node ./node_modules/isparta/bin/isparta cover ./tests"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
