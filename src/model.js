@@ -120,7 +120,7 @@ export default class Model {
 
     for (const key of Object.keys(this)) {
       // Respect ignorable properties
-      if (ignorableProps.includes(key)) continue;
+      if (ignorableProps.indexOf(key) >= 0) continue;
 
       const oldValue = this._oldProps[key];
       const newValue = this[key];

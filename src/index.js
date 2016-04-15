@@ -1,5 +1,5 @@
+import './model';
 import { underscore } from 'inflection';
-import Model from './model';
 import { DbObjectAlreadyRegisteredError } from './errors';
 import { requireUncached } from './utils';
 
@@ -66,7 +66,7 @@ export default class KnexOrm {
   register(model, name) {
     // Determine the Model's name and then check if it's already registered
     const modelName = name || model.name;
-    if (Object.keys(this._models).includes(modelName)) {
+    if (Object.keys(this._models).indexOf(modelName) >= 0) {
       throw new DbObjectAlreadyRegisteredError(modelName);
     }
 

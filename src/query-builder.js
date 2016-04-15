@@ -28,7 +28,7 @@ export default class QueryBuilder {
 
     // Filter the given relations by name if necessary
     if (relationNames.length > 0) {
-      relationEntries.filter(([name]) => relationNames.includes(name));
+      relationEntries.filter(([name]) => relationNames.indexOf(name) >= 0);
     }
 
     // Store the filtered relations
