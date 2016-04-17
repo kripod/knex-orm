@@ -162,6 +162,7 @@ export default class Model {
     if (typeof this[idAttribute] === 'undefined') return null;
 
     return this.constructor.query()
-      .where({ [idAttribute]: this[idAttribute] });
+      .where({ [idAttribute]: this[idAttribute] })
+      .first();
   }
 }

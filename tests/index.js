@@ -67,7 +67,7 @@ test('modifying existing models', (t) => {
 
   // Cover the avoidance of unnecessary queries
   t.equals(oldEmployee.save().toString(),
-    'select * from "employees" where "id" = 5'
+    'select * from "employees" where "id" = 5 limit 1'
   );
   t.throws(() => newEmployee.save(), 'should throw EmptyDbObjectError');
   t.end();
@@ -84,12 +84,18 @@ test('deleting existing models', (t) => {
 });
 
 test('relations', (t) => {
-  t.equals(oldEmployee.fetchRelated('company').toString('\t').split('\t')[1],
+  const qb = oldEmployee.fetchRelated('company');
+  t.equals(qb.toString('\t').split('\t')[1],
     'select * from "companies" where "rank" in (\'originInstance.companyId\')'
   );
 
-  t.end();
+  qb.then((employee) => {
+    t.ok(employee.company instanceof Company);
+  }).then(t.end);
 });
 
-// Destroy the Knex instance being used to exit from the test suite
-Database.knex.destroy();
+test('destroying knex instance', (t) => {
+  // Destroy the Knex instance being used to exit from the test suite
+  Database.knex.destroy();
+  t.end();
+});

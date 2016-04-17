@@ -61,6 +61,11 @@ export default class Relation {
       result;
   }
 
+  /**
+   * Creates a query based on the given origin Model instances.
+   * @param {Object[]} originInstances Origin Model instances.
+   * @returns {QueryBuilder}
+   */
   createQuery(originInstances) {
     const originAttribute = this.originAttribute;
     const targetAttribute = this.targetAttribute;
@@ -74,6 +79,12 @@ export default class Relation {
       );
   }
 
+  /**
+   * Applies the relation by executing subqueries on the origin Model instances.
+   * @param {...Object} originInstances Origin Model instances.
+   * @throws {RelationError}
+   * @returns {Promise}
+   */
   applyAsync(...originInstances) {
     const models = flattenArray(originInstances);
     const originAttribute = this.originAttribute;

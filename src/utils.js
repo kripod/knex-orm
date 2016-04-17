@@ -1,6 +1,9 @@
 import { camelize } from 'inflection';
 
 export function camelizeKeys(obj) {
+  // Don't camelize the keys of non-objects
+  if (!(obj instanceof Object)) return obj;
+
   // Support recursive array transformation
   if (Array.isArray(obj)) {
     return obj.map((item) => camelizeKeys(item));
