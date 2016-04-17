@@ -19,9 +19,11 @@
     "start": "babel-node ./example",
     "build": "babel ./src -d ./lib -s",
     "watch": "npm run build -- -w",
-    "init-db": "knex migrate:latest && knex seed:run",
+    "init-db": "npm run babel-knex -- migrate:latest && npm run babel-knex -- seed:run",
     "docs": "documentation readme ./src/index.js -s \"API Reference\"",
-    "test": "npm run init-db && babel-node ./node_modules/isparta/bin/isparta cover ./tests && npm run build && node ./tests/vanilla-node"
+    "test": "npm run init-db && npm run babel-isparta -- cover ./tests && npm run build && node ./tests/vanilla-node",
+    "babel-isparta": "babel-node ./node_modules/isparta/bin/isparta",
+    "babel-knex": "babel-node ./node_modules/knex/lib/bin/cli"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
