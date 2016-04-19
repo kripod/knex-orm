@@ -5,8 +5,7 @@ import RelationType from './enums/relation-type';
 import { EmptyDbObjectError, InexistentDbObjectError } from './errors';
 
 /**
- * Base Model class which shall be extended by the attributes of a database
- * object.
+ * Base Model class which should be used as an extension for database entities.
  */
 export default class Model {
   /**
@@ -16,22 +15,33 @@ export default class Model {
   static get tableName() { return tableize(this.name); }
 
   /**
-   * ID attribute, which is used as the primary key of the Model.
+   * Primary key of the Model, used for instance identification.
    * @type {string}
    */
-  static get idAttribute() { return 'id'; }
+  static get primaryKey() { return 'id'; }
+
+  /**
+   * The blacklist takes precedence over any whitelist rule.
+   */
+  static get whitelistedProps() { return []; }
+
+  static get blacklistedProps() { return []; }
+
+  /**
+   * @deprecated Use 'primaryKey' instead.
+   */
+  static get idAttribute() { return this.primaryKey; }
 
   /**
    * Creates a new Model instance.
    * @param {Object} [props={}] Initial properties of the instance.
-   * @param {boolean} [isNew=true] Determines whether the "props" of the
-   * instance are considered new.
+   * @param {boolean} [isNew=true] True if the instance is not yet stored
+   * persistently in the database.
    */
   constructor(props = {}, isNew = true) {
     // Set the initial properties of the instance
-    for (const key of Object.keys(props)) {
-      this[key] = props[key];
-    }
+    Object.assign(this, props);
+    Object.defineProperty(this, '_isNew', { value: isNew });
 
     // Initialize a store for old properties of the instance
     Object.defineProperty(this, '_oldProps', {
@@ -82,7 +92,7 @@ export default class Model {
   }
 
   /**
-   * Fetches the given related Models of the current instance.
+   * Queues fetching the given related Models of the current instance.
    * @param {...string} props Relation attributes to be fetched.
    * @returns {QueryBuilder}
    */
@@ -115,42 +125,42 @@ export default class Model {
    */
   save() {
     const qb = this._getQueryBuilder();
-    const ignorableProps = [this.constructor.idAttribute];
-    const updatableProps = {};
+    const changedProps = {};
 
-    for (const key of Object.keys(this)) {
-      // Respect ignorable properties
-      if (ignorableProps.indexOf(key) >= 0) continue;
+    // By default, save only the whitelisted properties, but if none is present,
+    // then save every property. Use the blacklist for filtering the results.
+    const savablePropNames = (
+      this.constructor.whitelistedProps.length > 0 ?
+      this.constructor.whitelistedProps :
+      Object.keys(this)
+    ).filter((propName) =>
+      this.constructor.blacklistedProps.indexOf(propName) < 0
+    );
 
-      const oldValue = this._oldProps[key];
-      const newValue = this[key];
+    for (const propName of savablePropNames) {
+      const oldValue = this._oldProps[propName];
+      const newValue = this[propName];
 
       // New and modified properties must be updated
       if (typeof oldValue === 'undefined' || newValue !== oldValue) {
-        updatableProps[key] = newValue;
+        changedProps[propName] = newValue;
       }
     }
 
     // Don't run unnecessary queries
-    if (Object.keys(updatableProps).length === 0) {
-      if (!qb) {
-        throw new EmptyDbObjectError();
-      }
+    if (Object.keys(changedProps).length === 0) {
+      if (!qb) throw new EmptyDbObjectError();
 
       return qb;
     }
 
     // Update the Model's old properties with the new ones
-    for (const key of Object.keys(updatableProps)) {
-      this._oldProps[key] = updatableProps[key];
-    }
+    Object.assign(this._oldProps, changedProps);
 
-    // Check whether the current instance needs to be given an ID
-    if (!qb) {
-      return this.constructor.query().insert(updatableProps);
-    }
-
-    return qb.update(updatableProps);
+    // Insert or update the current instance in the database
+    return qb ?
+      qb.update(changedProps) :
+      this.constructor.query().insert(changedProps);
   }
 
   /**
@@ -158,11 +168,11 @@ export default class Model {
    * @private
    */
   _getQueryBuilder() {
-    const idAttribute = this.constructor.idAttribute;
-    if (typeof this[idAttribute] === 'undefined') return null;
+    if (this._isNew) return null;
 
+    const primaryKey = this.constructor.primaryKey;
     return this.constructor.query()
-      .where({ [idAttribute]: this[idAttribute] })
+      .where({ [primaryKey]: this[primaryKey] })
       .first();
   }
 }

@@ -18,7 +18,7 @@ export default class QueryBuilder {
   }
 
   /**
-   * Fetches the given related Models of the queryable instance(s).
+   * Queues fetching the given related Models of the queryable instance(s).
    * @param {...string} props Relation attributes to be fetched.
    * @returns {QueryBuilder}
    */
@@ -42,10 +42,10 @@ export default class QueryBuilder {
 
   /**
    * Executes the query as a Promise.
-   * @param {...Object} args Arguments to be passed to Promise.then().
+   * @param {...Function} callbacks Callbacks to be passed to Promise.then().
    * @returns {Promise}
    */
-  then(...args) {
+  then(...callbacks) {
     let result;
 
     return this._knexQb
@@ -69,7 +69,7 @@ export default class QueryBuilder {
         return Promise.all(awaitableQueries);
       })
       .then(() => result)
-      .then(...args);
+      .then(...callbacks);
   }
 
   /**
