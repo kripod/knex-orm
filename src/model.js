@@ -21,10 +21,18 @@ export default class Model {
   static get primaryKey() { return 'id'; }
 
   /**
-   * The blacklist takes precedence over any whitelist rule.
+   * List of properties which should exclusively be present in database
+   * entities. If the list is empty, then every enumerable property of the
+   * instance are considered to be database entities.
+   * @type {string[]}
    */
   static get whitelistedProps() { return []; }
 
+  /**
+   * List of properties which shall not be present in database entities. The
+   * blacklist takes precedence over any whitelist rule.
+   * @type {string[]}
+   */
   static get blacklistedProps() { return []; }
 
   /**
@@ -117,9 +125,6 @@ export default class Model {
 
   /**
    * Queues saving (creating or updating) the current Model in the database.
-   * If the 'idAttribute' of the current instance is set, then this method
-   * queues an update query based on it. Otherwise, a new Model gets inserted
-   * into the database.
    * @throws {EmptyDbObjectError}
    * @returns {QueryBuilder}
    */
@@ -172,7 +177,7 @@ export default class Model {
 
     const primaryKey = this.constructor.primaryKey;
     return this.constructor.query()
-      .where({ [primaryKey]: this[primaryKey] })
+      .where({ [primaryKey]: this._oldProps[primaryKey] || this[primaryKey] })
       .first();
   }
 }

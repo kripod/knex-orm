@@ -67,7 +67,7 @@ class Company extends Database.Model {
   // The 'tableName' property is omitted on purpose, as it gets assigned
   // automatically based on the Model's class name.
 
-  static get idAttribute() { return 'rank'; }
+  static get primaryKey() { return 'rank'; }
 
   static get related() {
     return {

@@ -43,7 +43,7 @@ export default class Relation {
 
   get originAttribute() {
     const result = this.type === RelationType.MANY_TO_ONE ?
-      this.target.idAttribute :
+      this.target.primaryKey :
       this.foreignKey;
 
     return this.origin._parent.options.convertCase ?
@@ -54,7 +54,7 @@ export default class Relation {
   get targetAttribute() {
     const result = this.type === RelationType.MANY_TO_ONE ?
       this.foreignKey :
-      this.origin.idAttribute;
+      this.origin.primaryKey;
 
     return this.origin._parent.options.convertCase ?
       camelize(result, true) :
