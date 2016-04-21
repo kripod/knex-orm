@@ -124,8 +124,7 @@ Company.query().where({ email: 'info@famouscompany.example' }).first()
 
 ### Model
 
-Base Model class which shall be extended by the attributes of a database
-object.
+Base Model class which should be used as an extension for database entities.
 
 #### constructor
 
@@ -134,8 +133,8 @@ Creates a new Model instance.
 **Parameters**
 
 -   `props` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)=** Initial properties of the instance. (optional, default `{}`)
--   `isNew` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)=** Determines whether the "props" of the
-    instance are considered new. (optional, default `true`)
+-   `isNew` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)=** True if the instance is not yet stored
+    persistently in the database. (optional, default `true`)
 
 #### del
 
@@ -147,7 +146,7 @@ Returns **QueryBuilder**
 
 #### fetchRelated
 
-Fetches the given related Models of the current instance.
+Queues fetching the given related Models of the current instance.
 
 **Parameters**
 
@@ -158,9 +157,6 @@ Returns **QueryBuilder**
 #### save
 
 Queues saving (creating or updating) the current Model in the database.
-If the 'idAttribute' of the current instance is set, then this method
-queues an update query based on it. Otherwise, a new Model gets inserted
-into the database.
 
 -   Throws **EmptyDbObjectError** 
 
@@ -177,6 +173,11 @@ Creates a many-to-one relation between the current Model and a target.
 -   `foreignKey` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)=** Foreign key in this Model.
 
 Returns **Relation** 
+
+#### blacklistedProps
+
+List of properties which shall not be present in database entities. The
+blacklist takes precedence over any whitelist rule.
 
 #### hasMany
 
@@ -204,7 +205,9 @@ Returns **Relation**
 
 #### idAttribute
 
-ID attribute, which is used as the primary key of the Model.
+#### primaryKey
+
+Primary key of the Model, used for instance identification.
 
 #### query
 
@@ -215,6 +218,12 @@ Returns **QueryBuilder**
 #### tableName
 
 Case-sensitive name of the database table which corresponds to the Model.
+
+#### whitelistedProps
+
+List of properties which should exclusively be present in database
+entities. If the list is empty, then every enumerable property of the
+instance are considered to be database entities.
 
 ### KnexOrm
 
@@ -291,7 +300,7 @@ Executes the query as a Promise.
 
 **Parameters**
 
--   `args` **...[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Arguments to be passed to Promise.then().
+-   `callbacks` **...[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** Callbacks to be passed to Promise.then().
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
 
@@ -308,7 +317,7 @@ Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 #### withRelated
 
-Fetches the given related Models of the queryable instance(s).
+Queues fetching the given related Models of the queryable instance(s).
 
 **Parameters**
 
