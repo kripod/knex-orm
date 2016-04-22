@@ -8,6 +8,7 @@ import { camelizeKeys, flattenArray, modelize } from './utils';
 export default class QueryBuilder {
   constructor(Model) {
     this.Model = Model;
+    this.beforeExecute = () => {};
 
     Object.defineProperty(this, '_knexQb', {
       writable: true,
@@ -46,8 +47,9 @@ export default class QueryBuilder {
    * @returns {Promise}
    */
   then(...callbacks) {
-    let result;
+    this.beforeExecute();
 
+    let result;
     return this._knexQb
       .then((res) => {
         const awaitableQueries = [];

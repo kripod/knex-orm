@@ -1,8 +1,13 @@
+import Ajv from 'ajv';
 import { tableize } from 'inflection';
 import QueryBuilder from './query-builder';
 import Relation from './relation';
 import RelationType from './enums/relation-type';
-import { EmptyDbObjectError, InexistentDbObjectError } from './errors';
+import {
+  EmptyDbObjectError,
+  InexistentDbObjectError,
+  ValidationError,
+} from './errors';
 
 /**
  * Base Model class which should be used as an extension for database entities.
@@ -34,6 +39,13 @@ export default class Model {
    * @type {string[]}
    */
   static get blacklistedProps() { return []; }
+
+  /**
+   * JSON Schema to be used for validating instances of the Model. Validation
+   * happens automatically before executing queries.
+   * @type{?Object}
+   */
+  static get jsonSchema() { return null; }
 
   /**
    * @deprecated Use 'primaryKey' instead.
@@ -97,6 +109,20 @@ export default class Model {
    */
   static belongsTo(Target, foreignKey) {
     return new Relation(this, Target, RelationType.MANY_TO_ONE, foreignKey);
+  }
+
+  /**
+   * Validates all the enumerable properties of the current instance.
+   * @throws {ValidationError}
+   */
+  validate() {
+    const schema = this.constructor.jsonSchema;
+    if (!schema) return; // The Model is valid if no schema is given
+
+    const ajv = new Ajv();
+    if (!ajv.validate(schema, this)) {
+      throw new ValidationError(ajv.errors);
+    }
   }
 
   /**
@@ -176,8 +202,11 @@ export default class Model {
     if (this._isNew) return null;
 
     const primaryKey = this.constructor.primaryKey;
-    return this.constructor.query()
+    const qb = this.constructor.query()
       .where({ [primaryKey]: this._oldProps[primaryKey] || this[primaryKey] })
       .first();
+    qb.beforeExecute = () => this.validate;
+
+    return qb;
   }
 }

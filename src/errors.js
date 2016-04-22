@@ -54,3 +54,17 @@ export class RelationError extends ExtendableError {
     super('One-to-one and many-to-one Relations cannot be re-assigned');
   }
 }
+
+/**
+ * An error which gets thrown when a Model cannot be successfully validated
+ * against its JSON Schema.
+ * @extends Error
+ * @property {?Object} data Detailed information about why the validation has
+ * failed.
+ */
+export class ValidationError extends ExtendableError {
+  constructor(data) {
+    super('Model could not be successfully validated against its JSON Schema');
+    this.data = data;
+  }
+}
