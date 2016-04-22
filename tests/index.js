@@ -83,6 +83,16 @@ test('deleting existing models', (t) => {
   t.end();
 });
 
+test('validating models', (t) => {
+  const invalidCompany = new Company();
+  t.throws(() => invalidCompany.validate(), 'should throw ValidationError');
+
+  invalidCompany.save()
+    .then(() => t.fail())
+    .catch(() => t.pass())
+    .then(t.end);
+});
+
 test('relations', (t) => {
   const qb = oldEmployee.fetchRelated('company');
   t.equals(qb.toString('\t').split('\t')[1],
