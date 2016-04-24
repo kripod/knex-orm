@@ -15,7 +15,7 @@
     },
     {
       "taskName": "test",
-      "args": ["test"]
+      "args": ["run", "test:quick"]
     }
   ]
 }

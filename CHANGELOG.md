@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.0 - 2016-04-24
+- Added support for Model validation
+
 ## 1.1.0 - 2016-04-21
 - Added support for whitelisting/blacklisting Model properties
 - Fixed automatic camelization of query results: No unnecessary (and invalid)

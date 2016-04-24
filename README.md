@@ -162,6 +162,12 @@ Queues saving (creating or updating) the current Model in the database.
 
 Returns **QueryBuilder** 
 
+#### validate
+
+Validates all the enumerable properties of the current instance.
+
+-   Throws **ValidationError** 
+
 #### belongsTo
 
 Creates a many-to-one relation between the current Model and a target.
@@ -204,6 +210,11 @@ Creates a one-to-one relation between the current Model and a target.
 Returns **Relation** 
 
 #### idAttribute
+
+#### jsonSchema
+
+JSON Schema to be used for validating instances of the Model. Validation
+happens automatically before executing queries.
 
 #### primaryKey
 
@@ -330,3 +341,15 @@ Returns **QueryBuilder**
 **Extends Error**
 
 An error which gets thrown when a Relation does not behave as expected.
+
+### ValidationError
+
+**Extends Error**
+
+An error which gets thrown when a Model cannot be successfully validated
+against its JSON Schema.
+
+**Properties**
+
+-   `data` **?[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Detailed information about why the validation has
+    failed.
