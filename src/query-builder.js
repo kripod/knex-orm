@@ -42,11 +42,12 @@ export default class QueryBuilder {
   }
 
   /**
-   * Executes the query as a Promise.
-   * @param {...Function} callbacks Callbacks to be passed to Promise.then().
-   * @returns {Promise}
+   * Executes the query.
+   * @param {Function<Object>} [onFulfilled] Success handler function.
+   * @param {Function<Object>} [onRejected] Error handler function.
+   * @returns {Promise<Object>}
    */
-  then(...callbacks) {
+  then(onFulfilled = () => {}, onRejected = () => {}) {
     this.beforeExecute();
 
     let result;
@@ -70,8 +71,8 @@ export default class QueryBuilder {
 
         return Promise.all(awaitableQueries);
       })
-      .then(() => result)
-      .then(...callbacks);
+      .return(result)
+      .then(onFulfilled, onRejected);
   }
 
   /**
