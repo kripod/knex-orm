@@ -6,7 +6,7 @@
   // Configure glob patterns for excluding files and folders in searches
   "search.exclude": {
     "**/node_modules": true,
-    "**/legacy": true,
+    "**/lib": true,
     "**/coverage": true
   },
 

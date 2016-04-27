@@ -8,13 +8,9 @@
   "suppressTaskName": true,
   "tasks": [
     {
-      "taskName": "build",
-      "args": ["run", "build"],
-      "isBuildCommand": true
-    },
-    {
       "taskName": "watch",
       "args": ["run", "watch"],
+      "isBuildCommand": true,
       "isWatching": true
     },
     {

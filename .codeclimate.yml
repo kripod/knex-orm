@@ -1,6 +1,6 @@
 ratings:
   paths:
-  - lib/**
+  - src/**
 engines:
   duplication:
     enabled: true

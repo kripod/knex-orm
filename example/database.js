@@ -1,5 +1,5 @@
 import knex from 'knex';
-import KnexOrm from './../lib';
+import KnexOrm from './../src';
 import knexConfig from './../knexfile';
 
 export default new KnexOrm(
