@@ -20,9 +20,10 @@
     "start": "babel-node ./example",
     "build": "babel ./lib -d ./legacy -s",
     "watch": "npm run build -- -w",
+    "prepublish": "npm run build",
     "init-db": "npm run babel-knex -- migrate:latest && npm run babel-knex -- seed:run",
     "doc": "documentation build ./lib/index.js -o ./docs -f html",
-    "test": "npm run init-db && npm run test:quick && npm run build && node -e \"require('./legacy');\"",
+    "test": "npm run init-db && npm run test:quick && node -e \"require('./index');\"",
     "test:quick": "npm run babel-isparta -- cover ./tests",
     "babel-isparta": "babel-node ./node_modules/isparta/bin/isparta",
     "babel-knex": "babel-node ./node_modules/knex/lib/bin/cli"
