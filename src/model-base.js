@@ -12,20 +12,11 @@ import {
 
 /**
  * Base Model class which should be used as an extension for database entities.
+ * @property {Object} knex Knex client corresponding to the current ORM
+ * instance.
+ * @property {Object[]} plugins Plugins to be used for the current ORM instance.
  */
 export default class ModelBase {
-  /**
-   * Knex client corresponding to the current ORM instance.
-   * @type {Object}
-   */
-  static get knex() { return null; }
-
-  /**
-   * Plugins to be used for the current ORM instance.
-   * @type {Object[]}
-   */
-  static get plugins() { return []; }
-
   /**
    * Case-sensitive name of the database table which corresponds to the Model.
    * @type {string}
@@ -59,11 +50,6 @@ export default class ModelBase {
    * @type{?Object}
    */
   static get jsonSchema() { return null; }
-
-  /**
-   * @deprecated Use 'primaryKey' instead.
-   */
-  static get idAttribute() { return this.primaryKey; }
 
   /**
    * Registers this static Model object to the list of database objects.
