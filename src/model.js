@@ -4,6 +4,7 @@ import QueryBuilder from './query-builder';
 import Relation from './relation';
 import RelationType from './enums/relation-type';
 import {
+  DbObjectAlreadyRegisteredError,
   EmptyDbObjectError,
   InexistentDbObjectError,
   ValidationError,
@@ -13,6 +14,18 @@ import {
  * Base Model class which should be used as an extension for database entities.
  */
 export default class Model {
+  /**
+   * Knex client corresponding to the current ORM instance.
+   * @type {Object}
+   */
+  static get knex() { return null; }
+
+  /**
+   * Plugins to be used for the current ORM instance.
+   * @type {Object[]}
+   */
+  static get plugins() { return []; }
+
   /**
    * Case-sensitive name of the database table which corresponds to the Model.
    * @type {string}
@@ -53,21 +66,20 @@ export default class Model {
   static get idAttribute() { return this.primaryKey; }
 
   /**
-   * Creates a new Model instance.
-   * @param {Object} [props={}] Initial properties of the instance.
-   * @param {boolean} [isNew=true] True if the instance is not yet stored
-   * persistently in the database.
+   * Registers this static Model object to the list of database objects.
+   * @param {string} [name] Name under which the Model shall be registered.
+   * @throws {DbObjectAlreadyRegisteredError}
+   * @returns {Model} The current Model.
    */
-  constructor(props = {}, isNew = true) {
-    // Set the initial properties of the instance
-    Object.assign(this, props);
-    Object.defineProperty(this, '_isNew', { value: isNew });
+  static register(name) {
+    // Determine the Model's name and then check if it's already registered
+    const modelName = name || this.name;
+    if (Object.keys(this.registry).indexOf(modelName) >= 0) {
+      throw new DbObjectAlreadyRegisteredError(modelName);
+    }
 
-    // Initialize a store for old properties of the instance
-    Object.defineProperty(this, '_oldProps', {
-      writable: true,
-      value: isNew ? {} : Object.assign({}, props),
-    });
+    this.registry[modelName] = this;
+    return this;
   }
 
   /**
@@ -109,6 +121,24 @@ export default class Model {
    */
   static belongsTo(Target, foreignKey) {
     return new Relation(this, Target, RelationType.MANY_TO_ONE, foreignKey);
+  }
+
+  /**
+   * Creates a new Model instance.
+   * @param {Object} [props={}] Initial properties of the instance.
+   * @param {boolean} [isNew=true] True if the instance is not yet stored
+   * persistently in the database.
+   */
+  constructor(props = {}, isNew = true) {
+    // Set the initial properties of the instance
+    Object.assign(this, props);
+    Object.defineProperty(this, '_isNew', { value: isNew });
+
+    // Initialize a store for old properties of the instance
+    Object.defineProperty(this, '_oldProps', {
+      writable: true,
+      value: isNew ? {} : Object.assign({}, props),
+    });
   }
 
   /**
@@ -210,3 +240,5 @@ export default class Model {
     return qb;
   }
 }
+
+Model.registry = [];

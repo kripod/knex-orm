@@ -12,7 +12,7 @@ export default class QueryBuilder {
 
     Object.defineProperty(this, '_knexQb', {
       writable: true,
-      value: Model._parent.knex.from(Model.tableName),
+      value: Model.knex.from(Model.tableName),
     });
 
     Object.defineProperty(this, '_relations', { value: new Set() });
@@ -56,10 +56,12 @@ export default class QueryBuilder {
         const awaitableQueries = [];
         result = res;
 
-        // Apply letter case conversion if needed
+        // TODO: Apply letter case conversion if needed
+        /*
         if (this.Model._parent.options.convertCase) {
           result = camelizeKeys(result);
         }
+        */
 
         // Convert the result to a specific Model type if necessary
         result = modelize(result, this.Model);

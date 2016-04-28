@@ -1,6 +1,6 @@
-import Database from './../database';
+import Model from './../model';
 
-class Employee extends Database.Model {
+class Employee extends Model {
   static get tableName() { return 'employees'; }
 
   static get related() {
@@ -10,4 +10,4 @@ class Employee extends Database.Model {
   }
 }
 
-export default Database.register(Employee);
+export default Employee.register();

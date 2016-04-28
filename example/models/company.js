@@ -1,6 +1,6 @@
-import Database from './../database';
+import Model from './../model';
 
-class Company extends Database.Model {
+class Company extends Model {
   // The 'tableName' property is omitted on purpose
   static get primaryKey() { return 'rank'; }
   static get whitelistedProps() { return ['rank', 'name', 'email']; }
@@ -27,4 +27,4 @@ class Company extends Database.Model {
   }
 }
 
-export default Database.register(Company);
+export default Company.register();

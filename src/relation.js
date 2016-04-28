@@ -19,7 +19,7 @@ export default class Relation {
     this.origin = Origin;
 
     // Get the target's registered Model if target is a string
-    const modelRegistry = Origin._parent._models;
+    const modelRegistry = Origin.registry;
     this.target = typeof Target === 'string' ? modelRegistry[Target] : Target;
 
     this.type = type;
@@ -33,9 +33,12 @@ export default class Relation {
         `${underscore(this.target.name)}_id` :
         `${underscore(this.origin.name)}_id`;
 
+      // TODO: Handle case conversion properly
+      /*
       if (this.origin._parent.options.convertCase) {
         this._foreignKey = camelize(this._foreignKey, true);
       }
+      */
     }
 
     return this._foreignKey;
@@ -46,9 +49,14 @@ export default class Relation {
       this.target.primaryKey :
       this.foreignKey;
 
+    return result;
+
+    // TODO: Handle case conversion properly
+    /*
     return this.origin._parent.options.convertCase ?
       camelize(result, true) :
       result;
+    */
   }
 
   get targetAttribute() {
@@ -56,9 +64,14 @@ export default class Relation {
       this.foreignKey :
       this.origin.primaryKey;
 
+    return result;
+
+    // TODO: Handle case conversion properly
+    /*
     return this.origin._parent.options.convertCase ?
       camelize(result, true) :
       result;
+    */
   }
 
   /**
