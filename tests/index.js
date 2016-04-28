@@ -1,7 +1,7 @@
 import test from 'tape';
-import Database from './../example/database';
 import Company from './../example/models/company';
 import Employee from './../example/models/employee';
+import Model from './../example/model';
 
 const NEW_EMPLOYEE_PROPS = {
   company_id: 2,
@@ -15,7 +15,7 @@ const oldEmployee = new Employee({ id: 5, name: 'Alexa Buckner' }, false);
 // console.log(Company.where({ id: 3 }).orderBy('id').withRelated().toString());
 
 test('orm instance methods', (t) => {
-  t.throws(() => Database.register(null, 'Company'),
+  t.throws(() => Company.register(),
     'should throw DbObjectAlreadyRegisteredError'
   );
 
@@ -96,7 +96,7 @@ test('validating models', (t) => {
 test('relations', (t) => {
   const qb = oldEmployee.fetchRelated('company');
   t.equals(qb.toString('\t').split('\t')[1],
-    'select * from "companies" where "rank" in (\'originInstance.companyId\')'
+    'select * from "companies" where "rank" in (\'originInstance.company_id\')'
   );
 
   qb.then((employee) => {
@@ -106,6 +106,6 @@ test('relations', (t) => {
 
 test('destroying knex instance', (t) => {
   // Destroy the Knex instance being used to exit from the test suite
-  Database.knex.destroy();
+  Model.knex.destroy();
   t.end();
 });

@@ -13,7 +13,7 @@ import {
 /**
  * Base Model class which should be used as an extension for database entities.
  */
-export default class Model {
+export default class ModelBase {
   /**
    * Knex client corresponding to the current ORM instance.
    * @type {Object}
@@ -241,4 +241,4 @@ export default class Model {
   }
 }
 
-Model.registry = [];
+ModelBase.registry = [];

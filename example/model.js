@@ -1,5 +1,5 @@
 import knex from 'knex';
-import ModelBase from './../src';
+import { ModelBase } from './../src';
 import knexConfig from './../knexfile';
 
 const knexInstance = knex(knexConfig.development);
