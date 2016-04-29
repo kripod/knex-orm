@@ -8,7 +8,6 @@ import { camelizeKeys, flattenArray, modelize } from './utils';
 export default class QueryBuilder {
   constructor(Model) {
     this.Model = Model;
-    this.beforeExecute = () => {};
 
     Object.defineProperty(this, '_knexQb', {
       writable: true,
@@ -48,32 +47,38 @@ export default class QueryBuilder {
    * @returns {Promise<Object>}
    */
   then(onFulfilled = () => {}, onRejected = () => {}) {
-    this.beforeExecute();
+    // Apply the effect of plugins
+    let qb = this;
+    for (const plugin of this.Model.plugins) {
+      qb = plugin.beforeQuery(qb);
+    }
 
     let result;
-    return this._knexQb
+    return qb._knexQb
       .then((res) => {
         const awaitableQueries = [];
         result = res;
 
-        // TODO: Apply letter case conversion if needed
-        /*
-        if (this.Model._parent.options.convertCase) {
-          result = camelizeKeys(result);
-        }
-        */
-
         // Convert the result to a specific Model type if necessary
-        result = modelize(result, this.Model);
+        result = modelize(result, qb.Model);
 
         // Apply each desired relation to the original result
-        for (const relation of this._relations) {
+        for (const relation of qb._relations) {
           awaitableQueries.push(relation.applyAsync(result));
         }
 
         return Promise.all(awaitableQueries);
       })
-      .return(result)
+      .then(() => {
+        // Apply the effect of plugins
+        for (const plugin of qb.Model.plugins) {
+          result = plugin.afterQuery(result);
+        }
+
+        // Convert the result to a specific Model type if necessary
+        result = modelize(result, qb.Model);
+        return result;
+      })
       .then(onFulfilled, onRejected);
   }
 

@@ -224,7 +224,8 @@ export default class ModelBase {
     const qb = this.constructor.query()
       .where({ [primaryKey]: this._oldProps[primaryKey] || this[primaryKey] })
       .first();
-    qb.beforeExecute = () => this.validate;
+    // TODO: Implement Model validation
+    // qb.beforeExecute = () => this.validate;
 
     return qb;
   }
