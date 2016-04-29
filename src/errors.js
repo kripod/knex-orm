@@ -1,4 +1,4 @@
-class ExtendableError extends Error {
+class ErrorBase extends Error {
   constructor(message) {
     super(message);
     this.message = message;
@@ -14,7 +14,7 @@ class ExtendableError extends Error {
  * @extends Error
  * @property {string} name Name of the database object in question.
  */
-export class DbObjectAlreadyRegisteredError extends ExtendableError {
+export class DbObjectAlreadyRegisteredError extends ErrorBase {
   constructor(name) {
     super(
       `Database object with name '${name}' cannot be registered multiple times`
@@ -28,7 +28,7 @@ export class DbObjectAlreadyRegisteredError extends ExtendableError {
  * object.
  * @extends Error
  */
-export class EmptyDbObjectError extends ExtendableError {
+export class EmptyDbObjectError extends ErrorBase {
   constructor() {
     super('Empty database object cannot be stored');
   }
@@ -39,7 +39,7 @@ export class EmptyDbObjectError extends ExtendableError {
  * database object.
  * @extends Error
  */
-export class InexistentDbObjectError extends ExtendableError {
+export class InexistentDbObjectError extends ErrorBase {
   constructor() {
     super('Database object does not exist');
   }
@@ -49,7 +49,7 @@ export class InexistentDbObjectError extends ExtendableError {
  * An error which gets thrown when a Relation does not behave as expected.
  * @extends Error
  */
-export class RelationError extends ExtendableError {
+export class RelationError extends ErrorBase {
   constructor() {
     super('One-to-one and many-to-one Relations cannot be re-assigned');
   }
@@ -62,7 +62,7 @@ export class RelationError extends ExtendableError {
  * @property {?Object} data Detailed information about why the validation has
  * failed.
  */
-export class ValidationError extends ExtendableError {
+export class ValidationError extends ErrorBase {
   constructor(data) {
     super('Model could not be successfully validated against its JSON Schema');
     this.data = data;

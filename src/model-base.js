@@ -17,6 +17,9 @@ import {
  * @property {Object[]} plugins Plugins to be used for the current ORM instance.
  */
 export default class ModelBase {
+  static plugins = [];
+  static registry = [];
+
   /**
    * Case-sensitive name of the database table which corresponds to the Model.
    * @type {string}
@@ -226,5 +229,3 @@ export default class ModelBase {
     return qb;
   }
 }
-
-ModelBase.registry = [];
