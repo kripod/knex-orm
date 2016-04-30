@@ -28,6 +28,7 @@ export class CaseConverterPlugin extends PluginBase {
       result[transformer(key)] = value;
     }
 
-    return result;
+    // Assign the appropriate prototype to the result
+    return Object.create(Object.getPrototypeOf(obj), result);
   }
 }

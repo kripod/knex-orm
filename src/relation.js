@@ -1,4 +1,4 @@
-import { camelize, underscore } from 'inflection';
+import { underscore } from 'inflection';
 import RelationType from './enums/relation-type';
 import { RelationError } from './errors';
 import { flattenArray } from './utils';
@@ -23,55 +23,26 @@ export default class Relation {
     this.target = typeof Target === 'string' ? modelRegistry[Target] : Target;
 
     this.type = type;
-    this._foreignKey = foreignKey;
+    if (foreignKey) this.foreignKey = foreignKey;
   }
 
   get foreignKey() {
-    if (!this._foreignKey) {
-      // Set the foreign key deterministically
-      this._foreignKey = this.type === RelationType.MANY_TO_ONE ?
-        `${underscore(this.target.name)}_id` :
-        `${underscore(this.origin.name)}_id`;
-
-      // TODO: Handle case conversion properly
-      /*
-      if (this.origin._parent.options.convertCase) {
-        this._foreignKey = camelize(this._foreignKey, true);
-      }
-      */
-    }
-
-    return this._foreignKey;
+    // Set the foreign key deterministically
+    return this.type === RelationType.MANY_TO_ONE ?
+      `${underscore(this.target.name)}_id` :
+      `${underscore(this.origin.name)}_id`;
   }
 
   get originAttribute() {
-    const result = this.type === RelationType.MANY_TO_ONE ?
+    return this.type === RelationType.MANY_TO_ONE ?
       this.target.primaryKey :
       this.foreignKey;
-
-    return result;
-
-    // TODO: Handle case conversion properly
-    /*
-    return this.origin._parent.options.convertCase ?
-      camelize(result, true) :
-      result;
-    */
   }
 
   get targetAttribute() {
-    const result = this.type === RelationType.MANY_TO_ONE ?
+    return this.type === RelationType.MANY_TO_ONE ?
       this.foreignKey :
       this.origin.primaryKey;
-
-    return result;
-
-    // TODO: Handle case conversion properly
-    /*
-    return this.origin._parent.options.convertCase ?
-      camelize(result, true) :
-      result;
-    */
   }
 
   /**

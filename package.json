@@ -19,9 +19,10 @@
     "start": "babel-node ./example",
     "build": "babel ./src -d ./lib -s",
     "watch": "npm run build -- -w",
+    "prepublish": "npm run build",
     "init-db": "npm run babel-knex -- migrate:latest && npm run babel-knex -- seed:run",
     "doc": "documentation build ./src/index.js -o ./docs -f html",
-    "test": "npm run init-db && npm run test:quick && npm run build && node -e \"require('./lib');\"",
+    "test": "npm run init-db && npm run test:quick && node -e \"require('./lib');\"",
     "test:quick": "npm run babel-isparta -- cover ./tests",
     "babel-isparta": "babel-node ./node_modules/isparta/bin/isparta",
     "babel-knex": "babel-node ./node_modules/knex/lib/bin/cli"
@@ -48,7 +49,6 @@
     "eslint-plugin-import": "^1.5.0",
     "isparta": "^4.0.0",
     "istanbul": "^0.4.3",
-    "jsdoc-to-markdown": "^1.3.4",
     "knex": "^0.10.0",
     "sqlite3": "^3.1.3",
     "tape": "^4.5.1"

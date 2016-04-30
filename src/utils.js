@@ -30,8 +30,3 @@ export function modelize(obj, Model) {
   // Don't modelize non-objects
   return obj instanceof Object ? new Model(obj, false) : obj;
 }
-
-export function requireUncached(modulePath) {
-  delete require.cache[require.resolve(modulePath)];
-  return require(modulePath).default;
-}

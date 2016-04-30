@@ -5,9 +5,10 @@
 
   // Configure glob patterns for excluding files and folders in searches
   "search.exclude": {
-    "**/node_modules": true,
+    "**/coverage": true,
+    "**/docs": true,
     "**/lib": true,
-    "**/coverage": true
+    "**/node_modules": true
   },
 
   // Define special file associations for syntax highlighting

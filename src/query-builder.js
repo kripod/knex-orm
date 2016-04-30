@@ -1,5 +1,5 @@
 import Config from './config';
-import { camelizeKeys, flattenArray, modelize } from './utils';
+import { flattenArray, modelize } from './utils';
 
 /**
  * Represents a query builder which corresponds to a static Model reference.
@@ -8,13 +8,8 @@ import { camelizeKeys, flattenArray, modelize } from './utils';
 export default class QueryBuilder {
   constructor(Model) {
     this.Model = Model;
-
-    Object.defineProperty(this, '_knexQb', {
-      writable: true,
-      value: Model.knex.from(Model.tableName),
-    });
-
-    Object.defineProperty(this, '_relations', { value: new Set() });
+    this.knexInstance = Model.knex.from(Model.tableName);
+    this.includedRelations = new Set();
   }
 
   /**
@@ -34,7 +29,7 @@ export default class QueryBuilder {
     // Store the filtered relations
     for (const [name, relation] of relationEntries) {
       relation.name = name;
-      this._relations.add(relation);
+      this.includedRelations.add(relation);
     }
 
     return this;
@@ -54,7 +49,7 @@ export default class QueryBuilder {
     }
 
     let result;
-    return qb._knexQb
+    return qb.knexInstance
       .then((res) => {
         const awaitableQueries = [];
         result = res;
@@ -63,7 +58,7 @@ export default class QueryBuilder {
         result = modelize(result, qb.Model);
 
         // Apply each desired relation to the original result
-        for (const relation of qb._relations) {
+        for (const relation of qb.includedRelations) {
           awaitableQueries.push(relation.applyAsync(result));
         }
 
@@ -75,8 +70,6 @@ export default class QueryBuilder {
           result = plugin.afterQuery(result);
         }
 
-        // Convert the result to a specific Model type if necessary
-        result = modelize(result, qb.Model);
         return result;
       })
       .then(onFulfilled, onRejected);
@@ -90,8 +83,8 @@ export default class QueryBuilder {
    */
   toString(separator = '\n') {
     // Return a list of query strings to be executed, including Relations
-    const result = [this._knexQb.toString()];
-    for (const relation of this._relations) {
+    const result = [this.knexInstance.toString()];
+    for (const relation of this.includedRelations) {
       // Create the relation query with an empty array of Models
       result.push(relation.createQuery([]).toString());
     }
@@ -104,7 +97,7 @@ export default class QueryBuilder {
 for (const method of Config.KNEX_ALLOWED_QUERY_METHODS) {
   QueryBuilder.prototype[method] = function queryMethod(...args) {
     // Update Knex state
-    this._knexQb = this._knexQb[method](...args);
+    this.knexInstance = this.knexInstance[method](...args);
     return this;
   };
 }
