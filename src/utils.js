@@ -1,22 +1,3 @@
-import { camelize } from 'inflection';
-
-export function camelizeKeys(obj) {
-  // Don't camelize the keys of non-objects
-  if (!(obj instanceof Object)) return obj;
-
-  // Support recursive array transformation
-  if (Array.isArray(obj)) {
-    return obj.map((item) => camelizeKeys(item));
-  }
-
-  const result = {};
-  for (const [key, value] of Object.entries(obj)) {
-    result[camelize(key, true)] = value;
-  }
-
-  return result;
-}
-
 export function flattenArray(value) {
   return [].concat.apply([], value);
 }

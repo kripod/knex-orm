@@ -22,7 +22,7 @@
     "prepublish": "npm run build",
     "init-db": "npm run babel-knex -- migrate:latest && npm run babel-knex -- seed:run",
     "doc": "documentation build ./src/index.js -o ./docs -f html",
-    "test": "npm run init-db && npm run test:quick && node -e \"require('./lib');\"",
+    "test": "npm run init-db && npm run test:quick && node -e \"require('./lib');\" && eslint ./src",
     "test:quick": "npm run babel-isparta -- cover ./tests",
     "babel-isparta": "babel-node ./node_modules/isparta/bin/isparta",
     "babel-knex": "babel-node ./node_modules/knex/lib/bin/cli"

@@ -121,12 +121,16 @@ export default class ModelBase {
   constructor(props = {}, isNew = true) {
     // Set the initial properties of the instance
     Object.assign(this, props);
-    Object.defineProperty(this, '_isNew', { value: isNew });
 
     // Initialize a store for old properties of the instance
-    Object.defineProperty(this, '_oldProps', {
-      writable: true,
-      value: isNew ? {} : Object.assign({}, props),
+    Object.defineProperties(this, {
+      isNew: {
+        value: isNew,
+      },
+      oldProps: {
+        value: isNew ? {} : Object.assign({}, props),
+        writable: true,
+      },
     });
   }
 
@@ -150,7 +154,7 @@ export default class ModelBase {
    * @returns {QueryBuilder}
    */
   fetchRelated(...props) {
-    const qb = this._getQueryBuilder();
+    const qb = this.getQueryBuilder();
     if (!qb) throw new InexistentDbObjectError();
 
     return qb.withRelated(...props);
@@ -162,7 +166,7 @@ export default class ModelBase {
    * @returns {QueryBuilder}
    */
   del() {
-    const qb = this._getQueryBuilder();
+    const qb = this.getQueryBuilder();
     if (!qb) throw new InexistentDbObjectError();
 
     return qb.del();
@@ -174,7 +178,7 @@ export default class ModelBase {
    * @returns {QueryBuilder}
    */
   save() {
-    const qb = this._getQueryBuilder();
+    const qb = this.getQueryBuilder();
     const changedProps = {};
 
     // By default, save only the whitelisted properties, but if none is present,
@@ -188,11 +192,11 @@ export default class ModelBase {
     );
 
     for (const propName of savablePropNames) {
-      const oldValue = this._oldProps[propName];
+      const oldValue = this.oldProps[propName];
       const newValue = this[propName];
 
       // New and modified properties must be updated
-      if (typeof oldValue === 'undefined' || newValue !== oldValue) {
+      if (oldValue === undefined || newValue !== oldValue) {
         changedProps[propName] = newValue;
       }
     }
@@ -205,7 +209,7 @@ export default class ModelBase {
     }
 
     // Update the Model's old properties with the new ones
-    Object.assign(this._oldProps, changedProps);
+    Object.assign(this.oldProps, changedProps);
 
     // Insert or update the current instance in the database
     return qb ?
@@ -217,12 +221,12 @@ export default class ModelBase {
    * @returns {?QueryBuilder}
    * @private
    */
-  _getQueryBuilder() {
-    if (this._isNew) return null;
+  getQueryBuilder() {
+    if (this.isNew) return null;
 
     const primaryKey = this.constructor.primaryKey;
     const qb = this.constructor.query()
-      .where({ [primaryKey]: this._oldProps[primaryKey] || this[primaryKey] })
+      .where({ [primaryKey]: this.oldProps[primaryKey] || this[primaryKey] })
       .first();
     // TODO: Implement Model validation
     // qb.beforeExecute = () => this.validate;

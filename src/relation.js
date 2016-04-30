@@ -85,7 +85,7 @@ export default class Relation {
           );
 
           if (origin) {
-            if (typeof origin[this.name] === 'undefined') {
+            if (origin[this.name] === undefined) {
               // Initially set the origin's related property
               if (this.type === RelationType.ONE_TO_MANY) {
                 origin[this.name] = [relatedModel];

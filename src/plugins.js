@@ -1,9 +1,23 @@
-import { camelize } from 'inflection';
+import { camelize, underscore } from 'inflection';
 import PluginBase from './plugin-base';
 
 export class CaseConverterPlugin extends PluginBase {
+  beforeQuery(qb) {
+    const formatterPrototype = qb.knexInstance.client.Formatter.prototype;
+
+    // Override a Knex query formatter function by extending it
+    /* eslint-disable no-underscore-dangle */
+    ((originalFunction) => {
+      formatterPrototype._wrapString = function _wrapString(value) {
+        return underscore(originalFunction.call(this, value));
+      };
+    })(formatterPrototype._wrapString);
+    /* eslint-enable */
+
+    return qb;
+  }
+
   afterQuery(res) {
-    // TODO: Add support for custom transformations
     return this.transformKeys(res, (key) => camelize(key, true));
   }
 
