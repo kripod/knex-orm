@@ -16,7 +16,7 @@ export default class PluginBase {
       afterQuery: true,
     };
 
-    Object.assign(this.options, defaultOptions, options);
+    this.options = Object.assign(defaultOptions, options);
   }
 
   /**
