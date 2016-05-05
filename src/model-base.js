@@ -17,18 +17,8 @@ import {
  * @property {Object[]} plugins Plugins to be used for the current ORM instance.
  */
 export default class ModelBase {
-  static initedPlugins = [];
+  static plugins = [];
   static registry = [];
-
-  static get knex() { return this.clonedKnex; }
-  static set knex(value) {
-    this.clonedKnex = Object.assign({}, value);
-  }
-
-  static get plugins() { return this.initedPlugins; }
-  static set plugins(value) {
-    this.initedPlugins = value.map((plugin) => plugin.init(this));
-  }
 
   /**
    * Case-sensitive name of the database table which corresponds to the Model.
@@ -71,6 +61,12 @@ export default class ModelBase {
    * @returns {Model} The current Model.
    */
   static register(name) {
+    // Clone Knex and initialize plugins
+    this.knex = Object.assign({}, this.knex);
+    for (const plugin of this.plugins) {
+      plugin.init(this);
+    }
+
     // Determine the Model's name and then check if it's already registered
     const modelName = name || this.name;
     if (Object.keys(this.registry).indexOf(modelName) >= 0) {

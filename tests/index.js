@@ -4,9 +4,9 @@ import Employee from './../example/models/employee';
 import Model from './../example/model';
 
 const NEW_EMPLOYEE_PROPS = {
-  company_id: 2,
+  companyId: 2,
   name: 'Olympia Pearson',
-  birth_date: new Date('1982-08-20 00:00'),
+  birthDate: new Date('1982-08-20 00:00'),
 };
 
 const newEmployee = new Employee(NEW_EMPLOYEE_PROPS);
@@ -51,8 +51,8 @@ test('creating new models', (t) => {
 });
 
 test('modifying existing models', (t) => {
-  newEmployee.birth_date = new Date('1982-08-20 00:00');
-  newEmployee.zip_code = 5998;
+  newEmployee.birthDate = new Date('1982-08-20 00:00');
+  newEmployee.zipCode = 5998;
 
   t.equals(newEmployee.save().toString(),
     'insert into "employees" ("birth_date", "zip_code") ' +
@@ -60,7 +60,7 @@ test('modifying existing models', (t) => {
   );
 
   // Test modifying an existing employee
-  oldEmployee.zip_code = 4674;
+  oldEmployee.zipCode = 4674;
   t.equals(oldEmployee.save().toString(),
     'update "employees" set "zip_code" = 4674 where "id" = 5'
   );

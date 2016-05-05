@@ -82,9 +82,15 @@ export default class QueryBuilder {
    * @returns {string}
    */
   toString(separator = '\n') {
+    // Apply the effect of plugins
+    let qb = this;
+    for (const plugin of this.Model.plugins) {
+      qb = plugin.beforeQuery(qb);
+    }
+
     // Return a list of query strings to be executed, including Relations
-    const result = [this.knexInstance.toString()];
-    for (const relation of this.includedRelations) {
+    const result = [qb.knexInstance.toString()];
+    for (const relation of qb.includedRelations) {
       // Create the relation query with an empty array of Models
       result.push(relation.createQuery([]).toString());
     }
