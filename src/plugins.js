@@ -2,8 +2,8 @@ import { camelize, underscore } from 'inflection';
 import PluginBase from './plugin-base';
 
 export class CaseConverterPlugin extends PluginBase {
-  beforeQuery(qb) {
-    const formatterPrototype = qb.knexInstance.client.Formatter.prototype;
+  init(BaseModel) {
+    const formatterPrototype = BaseModel.knex.client.Formatter.prototype;
 
     // Override a Knex query formatter function by extending it
     /* eslint-disable no-underscore-dangle */
@@ -14,10 +14,12 @@ export class CaseConverterPlugin extends PluginBase {
     })(formatterPrototype._wrapString);
     /* eslint-enable */
 
-    return qb;
+    return this;
   }
 
   afterQuery(res) {
+    if (!this.options.afterQuery) return res;
+
     return this.transformKeys(res, (key) => camelize(key, true));
   }
 
@@ -45,4 +47,8 @@ export class CaseConverterPlugin extends PluginBase {
     // Assign the appropriate prototype to the result
     return Object.create(Object.getPrototypeOf(obj), result);
   }
+}
+
+export class ValidationPlugin extends PluginBase {
+  // TODO
 }

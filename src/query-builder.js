@@ -8,7 +8,7 @@ import { flattenArray, modelize } from './utils';
 export default class QueryBuilder {
   constructor(Model) {
     this.Model = Model;
-    this.knexInstance = Object.assign({}, Model.knex).from(Model.tableName);
+    this.knexInstance = Model.knex.from(Model.tableName);
     this.includedRelations = new Set();
   }
 

@@ -17,8 +17,18 @@ import {
  * @property {Object[]} plugins Plugins to be used for the current ORM instance.
  */
 export default class ModelBase {
-  static plugins = [];
+  static initedPlugins = [];
   static registry = [];
+
+  static get knex() { return this.clonedKnex; }
+  static set knex(value) {
+    this.clonedKnex = Object.assign({}, value);
+  }
+
+  static get plugins() { return this.initedPlugins; }
+  static set plugins(value) {
+    this.initedPlugins = value.map((plugin) => plugin.init(this));
+  }
 
   /**
    * Case-sensitive name of the database table which corresponds to the Model.
