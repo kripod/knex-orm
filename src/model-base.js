@@ -230,13 +230,6 @@ export default class ModelBase {
   getQueryBuilder() {
     if (this.isNew) return null;
 
-    const primaryKey = this.constructor.primaryKey;
-    const qb = this.constructor.query()
-      .where({ [primaryKey]: this.oldProps[primaryKey] || this[primaryKey] })
-      .first();
-    // TODO: Implement Model validation
-    // qb.beforeExecute = () => this.validate;
-
-    return qb;
+    return new QueryBuilder(this.constructor, this);
   }
 }

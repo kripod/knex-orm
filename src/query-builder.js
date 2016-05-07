@@ -6,10 +6,28 @@ import { flattenArray, modelize } from './utils';
  * Inherits every query method of the Knex query builder.
  */
 export default class QueryBuilder {
-  constructor(Model) {
-    this.Model = Model;
-    this.knexInstance = Model.knex.from(Model.tableName);
+  constructor(StaticModel, modelInstance) {
+    this.StaticModel = StaticModel;
+    this.modelInstance = modelInstance;
+
     this.includedRelations = new Set();
+    this.knexInstance = StaticModel.knex.from(StaticModel.tableName);
+    if (modelInstance) {
+      const props = {};
+      if (Array.isArray(StaticModel.primaryKey)) {
+        // Handle composite primary keys
+        for (const prop of StaticModel.primaryKey) {
+          props[prop] = modelInstance.oldProps[prop] || modelInstance[prop];
+        }
+      } else {
+        // Handle single primary key
+        const prop = StaticModel.primaryKey;
+        props[prop] = modelInstance.oldProps[prop] || modelInstance[prop];
+      }
+
+      // Filter to the given model instance
+      this.knexInstance = this.knexInstance.where(props).first();
+    }
   }
 
   /**
@@ -19,7 +37,7 @@ export default class QueryBuilder {
    */
   withRelated(...props) {
     const relationNames = flattenArray(props);
-    const relationEntries = Object.entries(this.Model.related);
+    const relationEntries = Object.entries(this.StaticModel.related);
 
     // Filter the given relations by name if necessary
     if (relationNames.length > 0) {
@@ -44,7 +62,7 @@ export default class QueryBuilder {
   then(onFulfilled = () => {}, onRejected = () => {}) {
     // Apply the effect of plugins
     let qb = this;
-    for (const plugin of this.Model.plugins) {
+    for (const plugin of this.StaticModel.plugins) {
       qb = plugin.beforeQuery(qb);
     }
 
@@ -55,7 +73,7 @@ export default class QueryBuilder {
         result = res;
 
         // Convert the result to a specific Model type if necessary
-        result = modelize(result, qb.Model);
+        result = modelize(result, qb.StaticModel);
 
         // Apply each desired relation to the original result
         for (const relation of qb.includedRelations) {
@@ -66,7 +84,7 @@ export default class QueryBuilder {
       })
       .then(() => {
         // Apply the effect of plugins
-        for (const plugin of qb.Model.plugins) {
+        for (const plugin of qb.StaticModel.plugins) {
           result = plugin.afterQuery(result);
         }
 
@@ -84,7 +102,7 @@ export default class QueryBuilder {
   toString(separator = '\n') {
     // Apply the effect of plugins
     let qb = this;
-    for (const plugin of this.Model.plugins) {
+    for (const plugin of this.StaticModel.plugins) {
       qb = plugin.beforeQuery(qb);
     }
 
