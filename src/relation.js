@@ -5,11 +5,11 @@ import { flattenArray } from './utils';
 
 /**
  * Represents a relation between Models.
- * @property {Model} origin Static Model object which shall be joined with the
+ * @property {Model} Origin Static Model object which shall be joined with the
  * target.
- * @property {Model} target Static Model object which corresponds to the origin.
- * @property {RelationType} type Type of the relation between 'origin' and
- * 'target'.
+ * @property {Model} Target Static Model object which corresponds to the origin.
+ * @property {RelationType} type Type of the relation between 'Origin' and
+ * 'Target'.
  * @property {string} foreignKey The attribute which points to the primary key
  * (ID attribute) of the joinable database table.
  * @private

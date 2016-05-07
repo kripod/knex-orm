@@ -1,4 +1,5 @@
 import { camelize, underscore } from 'inflection';
+import ModelBase from './model-base';
 import PluginBase from './plugin-base';
 
 export class CaseConverterPlugin extends PluginBase {
@@ -32,7 +33,7 @@ export class CaseConverterPlugin extends PluginBase {
    */
   transformKeys(obj, transformer) {
     // Don't transform the keys of non-objects
-    if (!(obj instanceof Object)) return obj;
+    if (!(obj instanceof ModelBase)) return obj;
 
     // Support recursive array transformation
     if (Array.isArray(obj)) {
@@ -50,5 +51,24 @@ export class CaseConverterPlugin extends PluginBase {
 }
 
 export class ValidationPlugin extends PluginBase {
-  // TODO
+  beforeQuery(qb) {
+    if (!this.options.beforeQuery) return qb;
+
+    const model = qb.modelInstance;
+    if (model) {
+      model.validate();
+    }
+
+    return qb;
+  }
+
+  afterQuery(res) {
+    if (!this.options.afterQuery) return res;
+
+    if (res instanceof ModelBase) {
+      res.validate();
+    }
+
+    return res;
+  }
 }
