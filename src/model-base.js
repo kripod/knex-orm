@@ -12,12 +12,24 @@ import {
 
 /**
  * Base Model class which should be used as an extension for database entities.
- * @property {Object} knex Knex client corresponding to the current ORM
- * instance.
- * @property {Object[]} plugins Plugins to be used for the current ORM instance.
  */
 export default class ModelBase {
+  /**
+   * Knex client corresponding to the current ORM instance.
+   * @type {Object}
+   * @memberof ModelBase
+   * @static
+   */
+  static knex;
+
+  /**
+   * Plugins to be used for the current ORM instance.
+   * @type {Object[]}
+   * @memberof ModelBase
+   * @static
+   */
   static plugins = [];
+
   static registry = [];
 
   /**

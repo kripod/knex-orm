@@ -5,16 +5,42 @@ import { flattenArray } from './utils';
 
 /**
  * Represents a relation between Models.
- * @property {Model} Origin Static Model object which shall be joined with the
- * target.
- * @property {Model} Target Static Model object which corresponds to the origin.
- * @property {RelationType} type Type of the relation between 'Origin' and
- * 'Target'.
- * @property {string} foreignKey The attribute which points to the primary key
- * (ID attribute) of the joinable database table.
  * @private
  */
 export default class Relation {
+  /**
+   * Static Model object which shall be joined with the target.
+   * @type {Model}
+   * @memberof Relation
+   * @instance
+   */
+  Origin;
+
+  /**
+   * Static Model object which corresponds to the origin.
+   * @type {Model}
+   * @memberof Relation
+   * @instance
+   */
+  Target;
+
+  /**
+   * Type of the relation between Origin and Target.
+   * @type {RelationType}
+   * @memberof Relation
+   * @instance
+   */
+  type;
+
+  /**
+   * The attribute which points to the primary key of the joinable database
+   * table.
+   * @type {string}
+   * @memberof Relation
+   * @instance
+   */
+  foreignKey;
+
   constructor(Origin, Target, type, foreignKey) {
     this.origin = Origin;
 

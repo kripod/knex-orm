@@ -12,9 +12,16 @@ class ErrorBase extends Error {
  * An error which gets thrown when an attempt is made to register a database
  * object multiple times.
  * @extends Error
- * @property {string} name Name of the database object in question.
  */
 export class DbObjectAlreadyRegisteredError extends ErrorBase {
+  /**
+   * Name of the database object in question.
+   * @type {string}
+   * @memberof DbObjectAlreadyRegisteredError
+   * @instance
+   */
+  name;
+
   constructor(name) {
     super(
       `Database object with name '${name}' cannot be registered multiple times`
@@ -59,10 +66,16 @@ export class RelationError extends ErrorBase {
  * An error which gets thrown when a Model cannot be successfully validated
  * against its JSON Schema.
  * @extends Error
- * @property {?Object} data Detailed information about why the validation has
- * failed.
  */
 export class ValidationError extends ErrorBase {
+  /**
+   * Detailed information about why the validation has failed.
+   * @type {?Object}
+   * @memberof ValidationError
+   * @instance
+   */
+  data;
+
   constructor(data) {
     super('Model could not be successfully validated against its JSON Schema');
     this.data = data;
