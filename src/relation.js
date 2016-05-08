@@ -41,12 +41,20 @@ export default class Relation {
    */
   foreignKey;
 
+  /**
+   * Name of the Relation.
+   * @type {string}
+   * @memberof Relation
+   * @instance
+   */
+  name;
+
   constructor(Origin, Target, type, foreignKey) {
-    this.origin = Origin;
+    this.Origin = Origin;
 
     // Get the target's registered Model if target is a string
     const modelRegistry = Origin.registry;
-    this.target = typeof Target === 'string' ? modelRegistry[Target] : Target;
+    this.Target = typeof Target === 'string' ? modelRegistry[Target] : Target;
 
     this.type = type;
     if (foreignKey) this.foreignKey = foreignKey;
@@ -55,20 +63,20 @@ export default class Relation {
   get foreignKey() {
     // Set the foreign key deterministically
     return this.type === RelationType.MANY_TO_ONE ?
-      `${underscore(this.target.name)}_id` :
-      `${underscore(this.origin.name)}_id`;
+      `${underscore(this.Target.name)}_id` :
+      `${underscore(this.Origin.name)}_id`;
   }
 
-  get originAttribute() {
+  get OriginAttribute() {
     return this.type === RelationType.MANY_TO_ONE ?
-      this.target.primaryKey :
+      this.Target.primaryKey :
       this.foreignKey;
   }
 
-  get targetAttribute() {
+  get TargetAttribute() {
     return this.type === RelationType.MANY_TO_ONE ?
       this.foreignKey :
-      this.origin.primaryKey;
+      this.Origin.primaryKey;
   }
 
   /**
@@ -77,15 +85,14 @@ export default class Relation {
    * @returns {QueryBuilder}
    */
   createQuery(originInstances) {
-    const originAttribute = this.originAttribute;
-    const targetAttribute = this.targetAttribute;
+    const { OriginAttribute, TargetAttribute } = this;
 
-    return this.target.query()
+    return this.Target.query()
       .whereIn(
-        originAttribute,
+        OriginAttribute,
         originInstances.length > 0 ? // Pass a mock value if necessary
-          originInstances.map((model) => model[targetAttribute]) :
-          [`originInstance.${targetAttribute}`]
+          originInstances.map((model) => model[TargetAttribute]) :
+          [`originInstance.${TargetAttribute}`]
       );
   }
 
@@ -97,31 +104,30 @@ export default class Relation {
    */
   applyAsync(...originInstances) {
     const models = flattenArray(originInstances);
-    const originAttribute = this.originAttribute;
-    const targetAttribute = this.targetAttribute;
+    const { OriginAttribute, TargetAttribute } = this;
 
     // Create and then execute the query, handling Model bindings
     return this.createQuery(models)
       .then((relatedModels) => {
         for (const relatedModel of relatedModels) {
           // Pair up the related Model with its origin
-          const foreignValue = relatedModel[originAttribute];
-          const origin = models.find((model) =>
-            model[targetAttribute] === foreignValue
+          const foreignValue = relatedModel[OriginAttribute];
+          const originInstance = models.find((model) =>
+            model[TargetAttribute] === foreignValue
           );
 
-          if (origin) {
-            if (origin[this.name] === undefined) {
+          if (originInstance) {
+            if (originInstance[this.name] === undefined) {
               // Initially set the origin's related property
               if (this.type === RelationType.ONE_TO_MANY) {
-                origin[this.name] = [relatedModel];
+                originInstance[this.name] = [relatedModel];
               } else {
-                origin[this.name] = relatedModel;
+                originInstance[this.name] = relatedModel;
               }
             } else {
-              // Modify the origin's related property if possible
+              // Modify the origin instance's related property if possible
               if (this.type === RelationType.ONE_TO_MANY) {
-                origin[this.name].push(relatedModel);
+                originInstance[this.name].push(relatedModel);
               } else {
                 throw new RelationError();
               }
