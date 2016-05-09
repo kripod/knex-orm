@@ -1,12 +1,4 @@
-class ErrorBase extends Error {
-  constructor(message) {
-    super(message);
-    this.message = message;
-    this.name = this.constructor.name;
-
-    this.stack = (new Error(message)).stack;
-  }
-}
+import ErrorBase from 'es6-error';
 
 /**
  * An error which gets thrown when an attempt is made to register a database

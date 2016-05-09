@@ -2,6 +2,12 @@ import test from 'tape';
 import Company from './../example/models/company';
 import Employee from './../example/models/employee';
 import Model from './../example/model';
+import {
+  DbObjectAlreadyRegisteredError,
+  EmptyDbObjectError,
+  InexistentDbObjectError,
+  ValidationError,
+} from './../src/errors';
 
 const NEW_EMPLOYEE_PROPS = {
   companyId: 2,
@@ -15,9 +21,7 @@ const oldEmployee = new Employee({ id: 5, name: 'Alexa Buckner' }, false);
 // console.log(Company.where({ id: 3 }).orderBy('id').withRelated().toString());
 
 test('orm instance methods', (t) => {
-  t.throws(() => Company.register(),
-    'should throw DbObjectAlreadyRegisteredError'
-  );
+  t.throws(() => Company.register(), DbObjectAlreadyRegisteredError);
 
   t.end();
 });
@@ -69,12 +73,12 @@ test('modifying existing models', (t) => {
   t.equals(oldEmployee.save().toString(),
     'select * from "employees" where "id" = 5 limit 1'
   );
-  t.throws(() => newEmployee.save(), 'should throw EmptyDbObjectError');
+  t.throws(() => newEmployee.save(), EmptyDbObjectError);
   t.end();
 });
 
 test('deleting existing models', (t) => {
-  t.throws(() => newEmployee.del(), 'should throw InexistentDbObjectError');
+  t.throws(() => newEmployee.del(), InexistentDbObjectError);
 
   t.equals(oldEmployee.del().toString(),
     'delete from "employees" where "id" = 5'
@@ -85,7 +89,7 @@ test('deleting existing models', (t) => {
 
 test('validating models', (t) => {
   const invalidCompany = new Company();
-  t.throws(() => invalidCompany.validate(), 'should throw ValidationError');
+  t.throws(() => invalidCompany.validate(), ValidationError);
 
   invalidCompany.save()
     .then(() => t.fail())

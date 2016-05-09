@@ -30,6 +30,7 @@
   "dependencies": {
     "ajv": "^4.0.5",
     "babel-runtime": "^6.6.1",
+    "es6-error": "^2.1.1",
     "inflection": "^1.10.0"
   },
   "peerDependencies": {
