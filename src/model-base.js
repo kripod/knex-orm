@@ -4,9 +4,9 @@ import QueryBuilder from './query-builder';
 import Relation from './relation';
 import RelationType from './enums/relation-type';
 import {
-  DbObjectAlreadyRegisteredError,
-  EmptyDbObjectError,
-  InexistentDbObjectError,
+  DuplicateModelError,
+  EmptyModelError,
+  UnidentifiedModelError,
   ValidationError,
 } from './errors';
 
@@ -69,7 +69,7 @@ export default class ModelBase {
   /**
    * Registers this static Model object to the list of database objects.
    * @param {string} [name] Name under which the Model shall be registered.
-   * @throws {DbObjectAlreadyRegisteredError}
+   * @throws {DuplicateModelError}
    * @returns {Model} The current Model.
    */
   static register(name) {
@@ -82,7 +82,7 @@ export default class ModelBase {
     // Determine the Model's name and then check if it's already registered
     const modelName = name || this.name;
     if (Object.keys(this.registry).indexOf(modelName) >= 0) {
-      throw new DbObjectAlreadyRegisteredError(modelName);
+      throw new DuplicateModelError(modelName);
     }
 
     this.registry[modelName] = this;
@@ -173,26 +173,26 @@ export default class ModelBase {
    */
   fetchRelated(...props) {
     const qb = this.getQueryBuilder();
-    if (!qb) throw new InexistentDbObjectError();
+    if (!qb) throw new UnidentifiedModelError();
 
     return qb.withRelated(...props);
   }
 
   /**
    * Queues the deletion of the current Model from the database.
-   * @throws {InexistentDbObjectError}
+   * @throws {UnidentifiedModelError}
    * @returns {QueryBuilder}
    */
   del() {
     const qb = this.getQueryBuilder();
-    if (!qb) throw new InexistentDbObjectError();
+    if (!qb) throw new UnidentifiedModelError();
 
     return qb.del();
   }
 
   /**
    * Queues saving (creating or updating) the current Model in the database.
-   * @throws {EmptyDbObjectError}
+   * @throws {EmptyModelError}
    * @returns {QueryBuilder}
    */
   save() {
@@ -221,7 +221,7 @@ export default class ModelBase {
 
     // Don't run unnecessary queries
     if (Object.keys(changedProps).length === 0) {
-      if (!qb) throw new EmptyDbObjectError();
+      if (!qb) throw new EmptyModelError();
 
       return qb;
     }

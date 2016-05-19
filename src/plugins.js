@@ -8,11 +8,10 @@ export class CaseConverterPlugin extends PluginBase {
 
     // Override a Knex query formatter function by extending it
     /* eslint-disable no-underscore-dangle */
-    ((originalFunction) => {
-      formatterPrototype._wrapString = function _wrapString(value) {
-        return underscore(originalFunction.call(this, value));
-      };
-    })(formatterPrototype._wrapString);
+    const originalFunction = formatterPrototype._wrapString;
+    formatterPrototype._wrapString = function _wrapString(value) {
+      return underscore(originalFunction.call(this, value));
+    };
     /* eslint-enable */
 
     return this;
@@ -37,7 +36,7 @@ export class CaseConverterPlugin extends PluginBase {
 
     // Support recursive array transformation
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.transformKeys(item));
+      return obj.map((item) => this.transformKeys(item, transformer));
     }
 
     const result = {};

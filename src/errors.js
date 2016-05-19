@@ -1,52 +1,35 @@
 import ErrorBase from 'es6-error';
 
 /**
- * An error which gets thrown when an attempt is made to register a database
- * object multiple times.
- * @extends Error
+ * An error which gets thrown when an attempt is made to register a Model
+ * multiple times.
  */
-export class DbObjectAlreadyRegisteredError extends ErrorBase {
+export class DuplicateModelError extends ErrorBase {
   /**
-   * Name of the database object in question.
+   * Name of the Model in question.
    * @type {string}
-   * @memberof DbObjectAlreadyRegisteredError
+   * @memberof DuplicateModelError
    * @instance
    */
   name;
 
   constructor(name) {
-    super(
-      `Database object with name '${name}' cannot be registered multiple times`
-    );
+    super(`Model with name '${name}' cannot be registered multiple times`);
     this.name = name;
   }
 }
 
 /**
- * An error which gets thrown when an attempt is made to store an empty database
- * object.
- * @extends Error
+ * An error which gets thrown when an attempt is made to store an empty Model.
  */
-export class EmptyDbObjectError extends ErrorBase {
+export class EmptyModelError extends ErrorBase {
   constructor() {
-    super('Empty database object cannot be stored');
-  }
-}
-
-/**
- * An error which gets thrown when an attempt is made to modify an inexistent
- * database object.
- * @extends Error
- */
-export class InexistentDbObjectError extends ErrorBase {
-  constructor() {
-    super('Database object does not exist');
+    super('Empty Model cannot be stored');
   }
 }
 
 /**
  * An error which gets thrown when a Relation does not behave as expected.
- * @extends Error
  */
 export class RelationError extends ErrorBase {
   constructor() {
@@ -55,9 +38,18 @@ export class RelationError extends ErrorBase {
 }
 
 /**
+ * An error which gets thrown when an attempt is made to modify a Model instance
+ * without specifying its primary key.
+ */
+export class UnidentifiedModelError extends ErrorBase {
+  constructor() {
+    super('Model cannot be identified without specifying primary key value(s)');
+  }
+}
+
+/**
  * An error which gets thrown when a Model cannot be successfully validated
  * against its JSON Schema.
- * @extends Error
  */
 export class ValidationError extends ErrorBase {
   /**

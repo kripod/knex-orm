@@ -3,9 +3,9 @@ import Company from './../example/models/company';
 import Employee from './../example/models/employee';
 import Model from './../example/model';
 import {
-  DbObjectAlreadyRegisteredError,
-  EmptyDbObjectError,
-  InexistentDbObjectError,
+  DuplicateModelError,
+  EmptyModelError,
+  UnidentifiedModelError,
   ValidationError,
 } from './../src/errors';
 
@@ -21,7 +21,7 @@ const oldEmployee = new Employee({ id: 5, name: 'Alexa Buckner' }, false);
 // console.log(Company.where({ id: 3 }).orderBy('id').withRelated().toString());
 
 test('orm instance methods', (t) => {
-  t.throws(() => Company.register(), DbObjectAlreadyRegisteredError);
+  t.throws(() => Company.register(), DuplicateModelError);
 
   t.end();
 });
@@ -73,12 +73,12 @@ test('modifying existing models', (t) => {
   t.equals(oldEmployee.save().toString(),
     'select * from "employees" where "id" = 5 limit 1'
   );
-  t.throws(() => newEmployee.save(), EmptyDbObjectError);
+  t.throws(() => newEmployee.save(), EmptyModelError);
   t.end();
 });
 
 test('deleting existing models', (t) => {
-  t.throws(() => newEmployee.del(), InexistentDbObjectError);
+  t.throws(() => newEmployee.del(), UnidentifiedModelError);
 
   t.equals(oldEmployee.del().toString(),
     'delete from "employees" where "id" = 5'
