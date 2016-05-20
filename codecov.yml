@@ -1,0 +1,8 @@
+codecov:
+  token: 991a42ba-3685-4fe0-b1cb-861e07689870
+  branch: master
+coverage:
+  notify:
+    gitter:
+      default:
+        url: https://webhooks.gitter.im/e/691a25c5ed68cc18043d

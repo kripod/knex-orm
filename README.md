@@ -4,8 +4,7 @@ Knex-based object-relational mapping for JavaScript.
 
 [![Version (npm)](https://img.shields.io/npm/v/knex-orm.svg)](https://npmjs.com/package/knex-orm)
 [![Build Status](https://img.shields.io/travis/kripod/knex-orm/master.svg)](https://travis-ci.org/kripod/knex-orm)
-[![Code Coverage](https://img.shields.io/codeclimate/coverage/github/kripod/knex-orm.svg)](https://codeclimate.com/github/kripod/knex-orm/coverage)
-[![Code Climate](https://img.shields.io/codeclimate/github/kripod/knex-orm.svg)](https://codeclimate.com/github/kripod/knex-orm)
+[![Code Coverage](https://img.shields.io/codecov/c/github/kripod/knex-orm/master.svg)](https://codecov.io/gh/kripod/knex-orm)
 [![Gitter](https://img.shields.io/gitter/room/kripod/knex-orm.svg)](https://gitter.im/kripod/knex-orm)
 
 ## Introduction

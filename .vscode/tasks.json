@@ -19,7 +19,7 @@
     },
     {
       "taskName": "test",
-      "args": ["run", "test:quick"],
+      "args": ["test"],
       "isTestCommand": true
     }
   ]
