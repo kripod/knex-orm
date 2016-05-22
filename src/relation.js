@@ -33,15 +33,6 @@ export default class Relation {
   type;
 
   /**
-   * The attribute which points to the primary key of the joinable database
-   * table.
-   * @type {string}
-   * @memberof Relation
-   * @instance
-   */
-  foreignKey;
-
-  /**
    * Name of the Relation.
    * @type {string}
    * @memberof Relation
@@ -60,23 +51,47 @@ export default class Relation {
     if (foreignKey) this.foreignKey = foreignKey;
   }
 
+  /**
+   * The attribute which points to the primary key of the joinable database
+   * table.
+   * @type {string}
+   */
   get foreignKey() {
     // Set the foreign key deterministically
-    return this.type === RelationType.MANY_TO_ONE ?
-      `${underscore(this.Target.name)}_id` :
-      `${underscore(this.Origin.name)}_id`;
+    return this.isTypeFromOne ?
+      `${underscore(this.Origin.name)}_id` :
+      `${underscore(this.Target.name)}_id`;
   }
 
   get OriginAttribute() {
-    return this.type === RelationType.MANY_TO_ONE ?
-      this.Target.primaryKey :
-      this.foreignKey;
+    return this.isTypeFromOne ?
+      this.foreignKey :
+      this.Target.primaryKey;
   }
 
   get TargetAttribute() {
-    return this.type === RelationType.MANY_TO_ONE ?
-      this.foreignKey :
-      this.Origin.primaryKey;
+    return this.isTypeFromOne ?
+      this.Origin.primaryKey :
+      this.foreignKey;
+  }
+
+  get isTypeFromOne() {
+    return [
+      RelationType.MANY_TO_ONE,
+      RelationType.MANY_TO_MANY,
+    ].indexOf(this.type) < 0;
+  }
+
+  /**
+   * Creates a many-to-many Relation from a one-to many Relation.
+   * @param {string|Model} Interim Name or static reference to the pivot Model.
+   * @param {string} [foreignKey] Foreign key in this Model.
+   * @param {string} [otherKey] Foreign key in the Interim Model.
+   * @returns {Relation}
+   */
+  through(Interim, foreignKey, otherKey) { // eslint-disable-line
+    // TODO
+    return this;
   }
 
   /**

@@ -43,7 +43,7 @@ export class RelationError extends ErrorBase {
  */
 export class UnidentifiedModelError extends ErrorBase {
   constructor() {
-    super('Model cannot be identified without specifying primary key value(s)');
+    super('Model cannot be identified without specifying a primary key value');
   }
 }
 
