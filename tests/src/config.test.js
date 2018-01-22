@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import Config from '../../lib/config'
+import Config from '../../src/config'
 
 describe('lib', () => {
   describe('Config', () => {
