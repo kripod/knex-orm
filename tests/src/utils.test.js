@@ -22,6 +22,17 @@ describe('lib', () => {
         let model = Utils.modelize(obj, Customer)
         expect(model instanceof Customer).to.eq(true)
       })
+
+      it('Should return model instance for array', () => {
+        class Customer {
+        }
+        let obj = { name: 'John' }
+        let obj2 = { name: 'Doe' }
+
+        let models = Utils.modelize([obj, obj2], Customer)
+        expect(models[0] instanceof Customer).to.eq(true)
+        expect(models[1] instanceof Customer).to.eq(true)
+      })
     })
   })
 })
