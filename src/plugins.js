@@ -31,17 +31,21 @@ export class CaseConverterPlugin extends PluginBase {
    * @private
    */
   transformKeys(obj, transformer) {
-    // Don't transform the keys of non-objects
-    if (!(obj instanceof ModelBase)) return obj;
-
     // Support recursive array transformation
     if (Array.isArray(obj)) {
       return obj.map((item) => this.transformKeys(item, transformer));
     }
 
+    // Don't transform the keys of non-objects
+    if (!(obj instanceof ModelBase)) return obj;
+
     const result = {};
     for (const [key, value] of Object.entries(obj)) {
-      result[transformer(key)] = value;
+      result[transformer(key)] = {
+        enumerable: true,
+        writable: true,
+        value
+      };
     }
 
     // Assign the appropriate prototype to the result
