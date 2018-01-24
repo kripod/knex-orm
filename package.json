@@ -21,7 +21,7 @@
     "watch": "npm run build -- -w",
     "prepublish": "npm run build",
     "init-db": "npm run babel-knex -- migrate:latest && npm run babel-knex -- seed:run",
-    "test": "mocha --require babel-core/register --recursive ./tests",
+    "test": "mocha --require babel-core/register --recursive -b ./tests",
     "doc": "documentation build ./src/index.js -o ./docs -f html",
     "babel-knex": "babel-node ./node_modules/knex/lib/bin/cli"
   },
