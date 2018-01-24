@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import Config from '../../src/config'
 
-describe('lib', () => {
+describe('src', () => {
   describe('Config', () => {
     it('Should not include "from" method', () => {
       expect(Config.KNEX_ALLOWED_QUERY_METHODS.indexOf('from')).to.eq(-1)

@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import * as Utils from '../../src/utils'
 
-describe('lib', () => {
+describe('src', () => {
   describe('Utils', () => {
     describe('flattenArray', () => {
       it('Should return flatten array', () => {
