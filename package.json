@@ -21,7 +21,7 @@
     "watch": "npm run build -- -w",
     "prepublish": "npm run build",
     "init-db": "npm run babel-knex -- migrate:latest && npm run babel-knex -- seed:run",
-    "test": "cross-env NODE_ENV=test nyc mocha --require babel-core/register --recursive -b ./tests",
+    "test": "cross-env NODE_ENV=test nyc mocha --require babel-core/register --recursive -b",
     "doc": "documentation build ./src/index.js -o ./docs -f html",
     "babel-knex": "babel-node ./node_modules/knex/lib/bin/cli"
   },
@@ -52,7 +52,7 @@
     "eslint-config-airbnb-base": "^3.0.1",
     "eslint-plugin-import": "^1.8.0",
     "istanbul": "^0.4.3",
-    "knex": "^0.11.0",
+    "knex": "^0.11.10",
     "mocha": "^5.0.0",
     "nyc": "^11.4.1",
     "sqlite3": "^3.1.4",
