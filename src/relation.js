@@ -58,9 +58,14 @@ export default class Relation {
    */
   get foreignKey() {
     // Set the foreign key deterministically
+    if (this._foreignKey) { return this._foreignKey }
     return this.isTypeFromOne ?
       `${underscore(this.Origin.name)}_id` :
       `${underscore(this.Target.name)}_id`;
+  }
+
+  set foreignKey(val) {
+    this._foreignKey = val
   }
 
   get OriginAttribute() {
