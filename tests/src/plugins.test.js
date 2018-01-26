@@ -3,10 +3,10 @@ import * as Plugins from '../../src/plugins'
 import ModelBase from '../../src/model-base'
 import knex from 'knex'
 import knexConfig from '../../knexfile'
-let knx = knex(knexConfig.development)
 
 describe('src', () => {
   describe('Plugins', () => {
+    let knx = knex(knexConfig.development)
     after(() => knx.destroy())
 
     describe('CaseConverterPlugin', () => {
